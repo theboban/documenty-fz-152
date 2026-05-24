@@ -1,284 +1,121 @@
---- index.html (原始)
-
-
-+++ index.html (修改后)
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Генератор документов 152-ФЗ</title>
-    <!-- Подключаем библиотеку для генерации DOCX -->
+    <!-- Подключаем библиотеки для работы с DOCX -->
     <script src="https://unpkg.com/docx@7.1.0/build/index.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <style>
-        :root {
-            --primary-color: #2c3e50;
-            --accent-color: #3498db;
-            --bg-color: #f8f9fa;
-            --text-color: #333;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 20px;
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        h1, h2 {
-            color: var(--primary-color);
-            text-align: center;
-        }
-
-        .step {
-            margin-bottom: 25px;
-            padding: 20px;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            background: #fff;
-        }
-
-        .step-title {
-            font-weight: bold;
-            font-size: 1.1em;
-            margin-bottom: 15px;
-            display: block;
-            color: var(--accent-color);
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            cursor: pointer;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="tel"],
-        textarea,
-        select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 14px;
-        }
-
-        .checkbox-group {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            background: #f1f1f1;
-            padding: 8px;
-            border-radius: 4px;
-        }
-
-        .checkbox-item input {
-            margin-right: 10px;
-        }
-
-        button {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        button:hover {
-            background-color: #2980b9;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .info-text {
-            font-size: 0.9em;
-            color: #666;
-            margin-top: -10px;
-            margin-bottom: 15px;
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333; line-height: 1.6; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #2c3e50; }
+        h2 { color: #34495e; border-bottom: 2px solid #3498db; padding-bottom: 10px; margin-top: 30px; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; }
+        input[type="text"], input[type="email"], input[type="tel"], select, textarea { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        .checkbox-group { margin-bottom: 15px; }
+        .checkbox-item { margin-bottom: 8px; display: flex; align-items: center; }
+        .checkbox-item input { margin-right: 10px; width: auto; }
+        button { display: block; width: 100%; padding: 15px; background-color: #27ae60; color: white; border: none; border-radius: 4px; font-size: 18px; cursor: pointer; transition: background 0.3s; margin-top: 20px; }
+        button:hover { background-color: #219150; }
+        .note { font-size: 0.9em; color: #7f8c8d; margin-top: 5px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1>Генератор документов 152-ФЗ</h1>
-    <p style="text-align: center; color: #666;">Создайте готовые документы для вашего сайта за 2 минуты</p>
+    <p>Заполните форму, чтобы получить готовый документ для вашего сайта.</p>
 
     <form id="docForm">
-        <!-- Шаг 1: Выбор типа документа -->
-        <div class="step">
-            <span class="step-title">1. Выберите тип документа</span>
-            <select id="docType" required onchange="toggleFields()">
-                <option value="" disabled selected>-- Выберите документ --</option>
-                <option value="policy">Политика обработки персональных данных</option>
-                <option value="cookie">Политика использования Cookie</option>
-                <option value="consent">Согласие на обработку ПДн (для форм)</option>
-                <option value="newsletter">Согласие на рассылку</option>
-                <option value="distribution">Согласие на распространение ПДн</option>
-                <option value="offer">Пользовательское соглашение (Оферта)</option>
-            </select>
+        <h2>1. Тип документа</h2>
+        <select id="docType" required>
+            <option value="policy_pd">Политика обработки персональных данных</option>
+            <option value="policy_cookie">Политика использования Cookie</option>
+            <option value="consent_process">Согласие на обработку ПДн (для форм)</option>
+            <option value="consent_mailing">Согласие на рассылку</option>
+            <option value="consent_spread">Согласие на распространение ПДн</option>
+            <option value="user_agreement">Пользовательское соглашение</option>
+        </select>
+
+        <h2>2. Данные вашей организации</h2>
+        <label for="orgName">Название организации / ИП:</label>
+        <input type="text" id="orgName" placeholder="ООО 'Ромашка' или Иванов И.И." required>
+
+        <label for="inn">ИНН:</label>
+        <input type="text" id="inn" placeholder="0000000000" required>
+
+        <label for="ogrn">ОГРН (для ООО):</label>
+        <input type="text" id="ogrn" placeholder="0000000000000">
+
+        <label for="address">Юридический адрес:</label>
+        <input type="text" id="address" placeholder="г. Москва, ул. Ленина, д. 1" required>
+
+        <label for="email">Email для связи:</label>
+        <input type="email" id="email" placeholder="info@site.ru" required>
+
+        <label for="phone">Телефон:</label>
+        <input type="tel" id="phone" placeholder="+7 (999) 000-00-00">
+
+        <label for="siteUrl">Адрес сайта (домен):</label>
+        <input type="text" id="siteUrl" placeholder="https://mysite.ru" required>
+
+        <h2>3. Функционал сайта (выберите используемое)</h2>
+        <div class="checkbox-group">
+            <div class="checkbox-item"><input type="checkbox" id="hasForms" checked> <label for="hasForms">Есть формы обратной связи / заявки</label></div>
+            <div class="checkbox-item"><input type="checkbox" id="hasCookies" checked> <label for="hasCookies">Используются Cookie файлы</label></div>
+            <div class="checkbox-item"><input type="checkbox" id="hasAnalytics" checked> <label for="hasAnalytics">Подключена аналитика (Яндекс.Метрика, Google Analytics)</label></div>
+            <div class="checkbox-item"><input type="checkbox" id="hasMailing"> <label for="hasMailing">Есть рассылка новостей</label></div>
+            <div class="checkbox-item"><input type="checkbox" id="hasRegistration"> <label for="hasRegistration">Есть регистрация пользователей (Личный кабинет)</label></div>
+            <div class="checkbox-item"><input type="checkbox" id="hasPayment"> <label for="hasPayment">Есть онлайн-оплата</label></div>
         </div>
 
-        <!-- Шаг 2: Данные организации -->
-        <div class="step">
-            <span class="step-title">2. Данные вашей организации (Оператора)</span>
-            <input type="text" id="orgName" placeholder="Название организации (ООО 'Ромашка' или ИП Иванов И.И.)" required>
-            <input type="text" id="orgInn" placeholder="ИНН" required>
-            <input type="text" id="orgOgrn" placeholder="ОГРН" required>
-            <input type="text" id="orgAddress" placeholder="Юридический адрес" required>
-            <input type="email" id="orgEmail" placeholder="E-mail для связи" required>
-            <input type="tel" id="orgPhone" placeholder="Телефон" required>
-            <textarea id="orgDetails" placeholder="Дополнительные реквизиты (необязательно)"></textarea>
-        </div>
-
-        <!-- Шаг 3: Данные сайта -->
-        <div class="step">
-            <span class="step-title">3. Информация о сайте</span>
-            <input type="text" id="siteDomain" placeholder="Домен сайта (example.ru)" required>
-            <input type="text" id="siteName" placeholder="Название сайта (например, 'Интернет-магазин Цветы')" required>
-        </div>
-
-        <!-- Шаг 4: Функционал сайта (влияет на текст) -->
-        <div class="step" id="featuresStep">
-            <span class="step-title">4. Что используется на сайте?</span>
-            <p class="info-text">Отметьте пункты, которые есть на вашем сайте, чтобы документ был точным.</p>
-
-            <div class="checkbox-group">
-                <label class="checkbox-item">
-                    <input type="checkbox" name="feature" value="forms"> Формы обратной связи / Заявки
-                </label>
-                <label class="checkbox-item">
-                    <input type="checkbox" name="feature" value="cookies"> Cookies и метрики (Яндекс, Google)
-                </label>
-                <label class="checkbox-item">
-                    <input type="checkbox" name="feature" value="analytics"> Системы аналитики
-                </label>
-                <label class="checkbox-item">
-                    <input type="checkbox" name="feature" value="payments"> Онлайн-оплата
-                </label>
-                <label class="checkbox-item">
-                    <input type="checkbox" name="feature" value="personal_cabinet"> Личный кабинет
-                </label>
-                <label class="checkbox-item">
-                    <input type="checkbox" name="feature" value="social_auth"> Вход через соцсети
-                </label>
-                <label class="checkbox-item">
-                    <input type="checkbox" name="feature" value="calls"> Заказ звонка
-                </label>
-                <label class="checkbox-item">
-                    <input type="checkbox" name="feature" value="reviews"> Отзывы / Комментарии
-                </label>
-            </div>
-        </div>
-
-        <button type="button" onclick="generateDocument()">Скачать документ (.docx)</button>
+        <button type="button" onclick="generateDoc()">Сгенерировать и скачать .docx</button>
     </form>
 </div>
 
 <script>
-    // Основная логика генерации
-    const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, BulletLevel, Table, TableRow, TableCell, WidthType } = docx;
+    const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, BulletLevel, LevelFormat } = docx;
 
-    function getCheckedFeatures() {
-        const checkboxes = document.querySelectorAll('input[name="feature"]:checked');
-        return Array.from(checkboxes).map(cb => cb.value);
-    }
-
-    function getData() {
-        return {
-            docType: document.getElementById('docType').value,
-            org: {
-                name: document.getElementById('orgName').value,
-                inn: document.getElementById('orgInn').value,
-                ogrn: document.getElementById('orgOgrn').value,
-                address: document.getElementById('orgAddress').value,
-                email: document.getElementById('orgEmail').value,
-                phone: document.getElementById('orgPhone').value,
-                details: document.getElementById('orgDetails').value
-            },
-            site: {
-                domain: document.getElementById('siteDomain').value,
-                name: document.getElementById('siteName').value
-            },
-            features: getCheckedFeatures()
+    function generateDoc() {
+        // Сбор данных
+        const docType = document.getElementById('docType').value;
+        const data = {
+            orgName: document.getElementById('orgName').value || "Название Организации",
+            inn: document.getElementById('inn').value || "0000000000",
+            ogrn: document.getElementById('ogrn').value || "",
+            address: document.getElementById('address').value || "Адрес",
+            email: document.getElementById('email').value || "email@example.com",
+            phone: document.getElementById('phone').value || "+7 (000) 000-00-00",
+            siteUrl: document.getElementById('siteUrl').value || "https://site.ru",
+            features: {
+                forms: document.getElementById('hasForms').checked,
+                cookies: document.getElementById('hasCookies').checked,
+                analytics: document.getElementById('hasAnalytics').checked,
+                mailing: document.getElementById('hasMailing').checked,
+                registration: document.getElementById('hasRegistration').checked,
+                payment: document.getElementById('hasPayment').checked
+            }
         };
-    }
-
-    function generateDocument() {
-        const data = getData();
-
-        if (!data.docType) {
-            alert("Пожалуйста, выберите тип документа.");
-            return;
-        }
-        if (!data.org.name || !data.site.domain) {
-            alert("Заполните обязательные поля (Название организации и Домен сайта).");
-            return;
-        }
 
         let content = [];
 
-        // Заголовок документа
-        const titleMap = {
-            'policy': 'ПОЛИТИКА ОБРАБОТКИ ПЕРСОНАЛЬНЫХ ДАННЫХ',
-            'cookie': 'ПОЛИТИКА ИСПОЛЬЗОВАНИЯ COOKIE',
-            'consent': 'СОГЛАСИЕ НА ОБРАБОТКУ ПЕРСОНАЛЬНЫХ ДАННЫХ',
-            'newsletter': 'СОГЛАСИЕ НА РАССЫЛКУ',
-            'distribution': 'СОГЛАСИЕ НА РАСПРОСТРАНЕНИЕ ПЕРСОНАЛЬНЫХ ДАННЫХ',
-            'offer': 'ПОЛЬЗОВАТЕЛЬСКОЕ СОГЛАШЕНИЕ (ОФЕРТА)'
-        };
-
-        content.push(new Paragraph({
-            text: titleMap[data.docType],
-            heading: HeadingLevel.HEADING_1,
-            alignment: AlignmentType.CENTER,
-            spacing: { after: 200 }
-        }));
-
         // Генерация контента в зависимости от типа
-        if (data.docType === 'policy') {
-            content = [...content, ...generatePolicyContent(data)];
-        } else if (data.docType === 'cookie') {
-            content = [...content, ...generateCookieContent(data)];
-        } else if (data.docType === 'consent') {
-            content = [...content, ...generateConsentContent(data)];
-        } else if (data.docType === 'newsletter') {
-            content = [...content, ...generateNewsletterContent(data)];
-        } else if (data.docType === 'distribution') {
-            content = [...content, ...generateDistributionContent(data)];
-        } else if (data.docType === 'offer') {
-            content = [...content, ...generateOfferContent(data)];
+        if (docType === 'policy_pd') {
+            content = getPolicyPDContent(data);
+        } else if (docType === 'policy_cookie') {
+            content = getPolicyCookieContent(data);
+        } else if (docType === 'consent_process') {
+            content = getConsentProcessContent(data);
+        } else if (docType === 'consent_mailing') {
+            content = getConsentMailingContent(data);
+        } else if (docType === 'consent_spread') {
+            content = getConsentSpreadContent(data);
+        } else if (docType === 'user_agreement') {
+            content = getUserAgreementContent(data);
         }
 
-        // Создание документа
         const doc = new Document({
             sections: [{
                 properties: {},
@@ -286,147 +123,216 @@
             }]
         });
 
-        // Скачивание
         Packer.toBlob(doc).then(blob => {
-            saveAs(blob, `${data.docType}_${data.site.domain}.docx`);
+            saveAs(blob, `${docType}_${data.orgName.replace(/[^a-zа-я0-9]/gi, '_')}.docx`);
         });
     }
 
-    // --- ГЕНЕРАТОРЫ КОНТЕНТА ДЛЯ КАЖДОГО ТИПА ---
+    // --- ГЕНЕРАТОРЫ КОНТЕНТА ---
 
-    function generatePolicyContent(data) {
-        const featuresText = getFeaturesDescription(data.features);
-
+    function getPolicyPDContent(d) {
         return [
+            new Paragraph({ text: `ПОЛИТИКА ОБРАБОТКИ ПЕРСОНАЛЬНЫХ ДАННЫХ`, heading: HeadingLevel.HEADING_1, alignment: AlignmentType.CENTER }),
+            new Paragraph({ text: `в отношении обработки персональных данных`, heading: HeadingLevel.HEADING_3, alignment: AlignmentType.CENTER }),
             new Paragraph({ text: `1. Общие положения`, heading: HeadingLevel.HEADING_2 }),
-            new Paragraph({ text: `Настоящая политика обработки персональных данных составлена в соответствии с требованиями Федерального закона от 27.07.2006. № 152-ФЗ «О персональных данных» и определяет порядок обработки персональных данных и меры по обеспечению безопасности персональных данных, предпринимаемые ${data.org.name} (далее – Оператор).`, spacing: { after: 200 } }),
-            new Paragraph({ text: `1.1. Оператор ставит своей важнейшей целью и условием осуществления своей деятельности соблюдение прав и свобод человека и гражданина при обработке его персональных данных, в том числе защиты прав на неприкосновенность частной жизни, личную и семейную тайну.`, spacing: { after: 200 } }),
-            new Paragraph({ text: `1.2. Настоящая политика Оператора в отношении обработки персональных данных (далее – Политика) применяется ко всей информации, которую Оператор может получить о посетителях веб-сайта ${data.site.domain}.`, spacing: { after: 200 } }),
-
+            new Paragraph({ text: `Настоящая политика обработки персональных данных составлена в соответствии с требованиями Федерального закона от 27.07.2006. № 152-ФЗ «О персональных данных» и определяет порядок обработки персональных данных и меры по обеспечению безопасности персональных данных, предпринимаемые ${d.orgName} (далее – Оператор).` }),
+            new Paragraph({ text: `1.1. Оператор ставит своей важнейшей целью и условием осуществления своей деятельности соблюдение прав и свобод человека и гражданина при обработке его персональных данных, в том числе защиты прав на неприкосновенность частной жизни, личную и семейную тайну.` }),
+            new Paragraph({ text: `1.2. Настоящая политика Оператора в отношении обработки персональных данных (далее – Политика) применяется ко всей информации, которую Оператор может получить о посетителях веб-сайта ${d.siteUrl}.` }),
+            
             new Paragraph({ text: `2. Основные понятия, используемые в Политике`, heading: HeadingLevel.HEADING_2 }),
-            new Paragraph({ text: `2.1. Веб-сайт – совокупность графических и информационных материалов, а также программ для ЭВМ и баз данных, обеспечивающих их доступность в сети интернет по сетевому адресу ${data.site.domain}.`, spacing: { after: 200 } }),
-            new Paragraph({ text: `2.2. Персональные данные – любая информация, относящаяся прямо или косвенно к определенному или определяемому Пользователю веб-сайта.`, spacing: { after: 200 } }),
-
+            new Paragraph({ text: `2.1. Веб-сайт – совокупность графических и информационных материалов, а также программ для ЭВМ и баз данных, обеспечивающих их доступность в сети интернет по сетевому адресу ${d.siteUrl}.` }),
+            new Paragraph({ text: `2.2. Пользователь – любой посетитель веб-сайта ${d.siteUrl}.` }),
+            new Paragraph({ text: `2.3. Персональные данные – любая информация, относящаяся прямо или косвенно к определенному или определяемому Пользователю веб-сайта.` }),
+            
             new Paragraph({ text: `3. Оператор может обрабатывать следующие персональные данные Пользователя`, heading: HeadingLevel.HEADING_2 }),
-            new Paragraph({ text: `3.1. Фамилия, имя, отчество.`, spacing: { after: 100 } }),
-            new Paragraph({ text: `3.2. Электронный адрес.`, spacing: { after: 100 } }),
-            new Paragraph({ text: `3.3. Номера телефонов.`, spacing: { after: 100 } }),
-            ...(data.features.includes('payments') ? [new Paragraph({ text: `3.4. Реквизиты банковских карт (при оплате).`, spacing: { after: 100 } })] : []),
-            new Paragraph({ text: `3.5. Также на сайте происходит сбор и обработка обезличенных данных о посетителях (в т.ч. файлов «cookie») с помощью сервисов интернет-статистики (Яндекс Метрика и Гугл Аналитика и других).`, spacing: { after: 200 } }),
+            ...buildFeatureList(d, [
+                { id: 'forms', text: 'Фамилия, имя, отчество; Email; Номер телефона (при заполнении форм).' },
+                { id: 'analytics', text: 'Данные о типе браузера, операционной системе, IP-адресе (автоматически через метрики).' },
+                { id: 'registration', text: 'Логин, пароль, данные профиля (при регистрации).' },
+                { id: 'payment', text: 'Данные банковской карты (обрабатываются только платежным шлюзом, не хранятся у Оператора).' }
+            ]),
+            new Paragraph({ text: `3.1. Также на сайте происходит сбор и обработка обезличенных данных о посетителях (в т.ч. файлов «cookie») с помощью сервисов интернет-статистики (Яндекс Метрика и Гугл Аналитика и других).` }),
 
             new Paragraph({ text: `4. Цели обработки персональных данных`, heading: HeadingLevel.HEADING_2 }),
-            new Paragraph({ text: `4.1. Цель обработки персональных данных Пользователя — информирование Пользователя посредством отправки электронных писем; заключение, исполнение и прекращение гражданско-правовых договоров; предоставление доступа Пользователю к сервисам, информации и/или материалам, содержащимся на веб-сайте ${data.site.domain}.`, spacing: { after: 200 } }),
-            new Paragraph({ text: `4.2. Также Оператор имеет право направлять Пользователю уведомления о новых продуктах и услугах, специальных предложениях и различных событиях.`, spacing: { after: 200 } }),
+            new Paragraph({ text: `4.1. Цель обработки персональных данных Пользователя — информирование Пользователя посредством отправки электронных писем; заключение, исполнение и прекращение гражданско-правовых договоров; предоставление доступа Пользователю к сервисам, информации и/или материалам, содержащимся на веб-сайте.` }),
+            ...buildFeatureList(d, [
+                { id: 'forms', text: '- Обработка заявок через формы обратной связи.' },
+                { id: 'mailing', text: '- Рассылка новостей и рекламных предложений.' },
+                { id: 'registration', text: '- Предоставление доступа к Личному кабинету.' },
+                { id: 'analytics', text: '- Улучшение качества сайта, анализ поведения пользователей.' }
+            ], true),
 
             new Paragraph({ text: `5. Правовые основания обработки персональных данных`, heading: HeadingLevel.HEADING_2 }),
-            new Paragraph({ text: `5.1. Оператор обрабатывает персональные данные Пользователя только в случае их заполнения и/или отправки Пользователем самостоятельно через специальные формы, расположенные на сайте ${data.site.domain}. Заполняя соответствующие формы, Пользователь выражает свое согласие с данной Политикой.`, spacing: { after: 200 } }),
+            new Paragraph({ text: `5.1. Оператор обрабатывает персональные данные Пользователя только в случае их заполнения и/или отправки Пользователем самостоятельно через специальные формы, расположенные на сайте ${d.siteUrl}. Заполняя соответствующие формы, Пользователь выражает свое согласие с данной Политикой.` }),
+            new Paragraph({ text: `5.2. Оператор обрабатывает обезличенные данные о Пользователе в случае, если это разрешено в настройках браузера Пользователя (включено сохранение файлов «cookie» и использование технологии JavaScript).` }),
 
             new Paragraph({ text: `6. Порядок сбора, хранения, передачи и других видов обработки персональных данных`, heading: HeadingLevel.HEADING_2 }),
-            new Paragraph({ text: `6.1. Безопасность персональных данных, которые обрабатываются Оператором, обеспечивается путем реализации правовых, организационных и технических мер, необходимых для выполнения в полном объеме требований действующего законодательства.`, spacing: { after: 200 } }),
-            new Paragraph({ text: `6.2. Оператор обеспечивает сохранность персональных данных и принимает все возможные меры, исключающие доступ к персональным данным неуполномоченных лиц.`, spacing: { after: 200 } }),
-            new Paragraph({ text: `6.3. Все персональные данные Пользователя без каких-либо исключительных условий могут быть переданы лицам, связанным с деятельностью Оператора на законных основаниях (сотрудники, подрядчики), исключительно в целях выполнения функций Оператора.`, spacing: { after: 200 } }),
+            new Paragraph({ text: `6.1. Безопасность персональных данных, которые обрабатываются Оператором, обеспечивается путем реализации правовых, организационных и технических мер, необходимых для выполнения в полном объеме требований действующего законодательства.` }),
+            new Paragraph({ text: `6.2. Оператор обеспечивает сохранность персональных данных и принимает все возможные меры, исключающие доступ к персональным данным неуполномоченных лиц.` }),
+            new Paragraph({ text: `6.3. Персональные данные Пользователя никогда, ни при каких условиях не будут переданы третьим лицам, за исключением случаев, связанных с исполнением действующего законодательства.` }),
 
             new Paragraph({ text: `7. Заключительные положения`, heading: HeadingLevel.HEADING_2 }),
-            new Paragraph({ text: `7.1. Пользователь может получить любые разъяснения по интересующим вопросам, касающимся обработки его персональных данных, обратившись к Оператору с помощью электронной почты ${data.org.email}.`, spacing: { after: 200 } }),
-            new Paragraph({ text: `7.2. В данном документе будут отражены любые изменения политики обработки персональных данных Оператором.`, spacing: { after: 200 } }),
-
-            new Paragraph({ text: `Реквизиты Оператора:`, heading: HeadingLevel.HEADING_3 }),
-            new Paragraph({ text: `${data.org.name}\nИНН: ${data.org.inn}\nОГРН: ${data.org.ogrn}\nАдрес: ${data.org.address}\nТелефон: ${data.org.phone}\nEmail: ${data.org.email}`, spacing: { after: 200 } })
+            new Paragraph({ text: `7.1. Пользователь может получить любые разъяснения по интересующим вопросам, касающимся обработки его персональных данных, обратившись к Оператору с помощью электронной почты ${d.email}.` }),
+            new Paragraph({ text: `7.2. В данном документе будут отражены любые изменения политики обработки персональных данных Оператором. Политика действует бессрочно до замены ее новой версией.` }),
+            new Paragraph({ text: `7.3. Актуальная версия Политики в свободном доступе расположена в сети Интернет по адресу ${d.siteUrl}/policy.` })
         ];
     }
 
-    function generateCookieContent(data) {
+    function getPolicyCookieContent(d) {
         return [
-            new Paragraph({ text: `1. Мы используем файлы cookie`, heading: HeadingLevel.HEADING_2 }),
-            new Paragraph({ text: `Наш сайт ${data.site.domain} использует файлы cookie для улучшения работы сайта и анализа трафика. Продолжая использовать сайт, вы соглашаетесь с использованием нами ваших файлов cookie.`, spacing: { after: 200 } }),
-
+            new Paragraph({ text: `ПОЛИТИКА В ОТНОШЕНИИ ОБРАБОТКИ ДАННЫХ COOKIE`, heading: HeadingLevel.HEADING_1, alignment: AlignmentType.CENTER }),
+            new Paragraph({ text: `1. Общие сведения`, heading: HeadingLevel.HEADING_2 }),
+            new Paragraph({ text: `Настоящий документ регулирует использование файлов cookie и других технологий отслеживания на веб-сайте ${d.siteUrl} (далее – Сайт), принадлежащем ${d.orgName} (ИНН ${d.inn}).` }),
+            new Paragraph({ text: `Используя Сайт, вы соглашаетесь с использованием файлов cookie в соответствии с этой политикой.` }),
+            
             new Paragraph({ text: `2. Что такое файлы cookie?`, heading: HeadingLevel.HEADING_2 }),
-            new Paragraph({ text: `Файлы cookie — это небольшие текстовые файлы, которые сохраняются на вашем устройстве (компьютере, смартфоне или планшете) при посещении веб-сайтов. Они позволяют сайту запоминать ваши действия и предпочтения.`, spacing: { after: 200 } }),
-
+            new Paragraph({ text: `Файлы cookie – это небольшие текстовые файлы, которые сохраняются на вашем устройстве (компьютере, смартфоне или планшете) при посещении веб-сайтов. Они позволяют сайту запоминать ваши действия и предпочтения.` }),
+            
             new Paragraph({ text: `3. Какие типы cookie мы используем`, heading: HeadingLevel.HEADING_2 }),
-            new Paragraph({ text: `3.1. Необходимые cookie: обеспечивают работу сайта (авторизация, корзины).`, spacing: { after: 100 } }),
-            new Paragraph({ text: `3.2. Аналитические cookie: помогают понять, как пользователи взаимодействуют с сайтом (Яндекс.Метрика, Google Analytics).`, spacing: { after: 100 } }),
-            new Paragraph({ text: `3.3. Маркетинговые cookie: используются для отслеживания посетителей на сайтах для показа релевантной рекламы.`, spacing: { after: 200 } }),
+            new Paragraph({ text: `Мы используем следующие категории файлов cookie:` }),
+            new Paragraph({ 
+                children: [
+                    new TextRun({ text: `• Технические (необходимые): `, bold: true }),
+                    new TextRun({ text: `Необходимы для корректной работы сайта (авторизация, корзины, формы). Без них сайт не сможет функционировать.` })
+                ]
+            }),
+            ...buildFeatureList(d, [
+                { id: 'analytics', pre: '• ', text: 'Аналитические: Помогают нам понять, как пользователи взаимодействуют с сайтом (Яндекс.Метрика, Google Analytics). Собирают обезличенные данные.', boldPre: true },
+                { id: 'mailing', pre: '• ', text: 'Маркетинговые: Используются для отслеживания эффективности рекламы и персонализации контента.', boldPre: true }
+            ], false, true),
 
-            new Paragraph({ text: `4. Управление cookie`, heading: HeadingLevel.HEADING_2 }),
-            new Paragraph({ text: `Вы можете управлять настройками cookie в своем браузере. Однако, если вы отключите cookie, некоторые функции сайта могут стать недоступными.`, spacing: { after: 200 } }),
-
-            new Paragraph({ text: `Контакты:`, heading: HeadingLevel.HEADING_3 }),
-            new Paragraph({ text: `${data.org.name}\nEmail: ${data.org.email}`, spacing: { after: 200 } })
+            new Paragraph({ text: `4. Как управлять файлами cookie`, heading: HeadingLevel.HEADING_2 }),
+            new Paragraph({ text: `Большинство браузеров позволяют контролировать файлы cookie через свои настройки. Вы можете настроить браузер так, чтобы он блокировал все файлы cookie или предупреждал об их установке. Однако, если вы отключите необходимые файлы cookie, некоторые функции сайта могут стать недоступными.` }),
+            
+            new Paragraph({ text: `5. Контактная информация`, heading: HeadingLevel.HEADING_2 }),
+            new Paragraph({ text: `Если у вас возникли вопросы относительно использования cookie, вы можете связаться с нами: ${d.email}.`)
         ];
     }
 
-    function generateConsentContent(data) {
+    function getConsentProcessContent(d) {
         return [
-            new Paragraph({ text: `Я, нижеподписавшийся, в соответствии с Федеральным законом от 27.07.2006 № 152-ФЗ «О персональных данных», даю свое согласие ${data.org.name} (далее – Оператор), расположенному по адресу: ${data.org.address}, на обработку моих персональных данных.`, spacing: { after: 200 } }),
-
+            new Paragraph({ text: `СОГЛАСИЕ НА ОБРАБОТКУ ПЕРСОНАЛЬНЫХ ДАННЫХ`, heading: HeadingLevel.HEADING_1, alignment: AlignmentType.CENTER }),
+            new Paragraph({ text: `Я, субъект персональных данных, в соответствии с Федеральным законом от 27.07.2006 № 152-ФЗ «О персональных данных», даю свое согласие ${d.orgName} (ИНН ${d.inn}, адрес: ${d.address}), на обработку моих персональных данных.` }),
+            
             new Paragraph({ text: `1. Перечень персональных данных`, heading: HeadingLevel.HEADING_2 }),
-            new Paragraph({ text: `Согласие дается на обработку следующих персональных данных: фамилия, имя, отчество, номер телефона, адрес электронной почты, а также иные данные, предоставленные мной через формы на сайте ${data.site.domain}.`, spacing: { after: 200 } }),
+            new Paragraph({ text: `Согласие распространяется на следующие персональные данные, которые я предоставляю добровольно:` }),
+            ...buildFeatureList(d, [
+                { id: 'forms', text: '- Фамилия, имя, отчество.' },
+                { id: 'forms', text: '- Адрес электронной почты.' },
+                { id: 'forms', text: '- Номер контактного телефона.' }
+            ], false, true),
 
             new Paragraph({ text: `2. Цели обработки`, heading: HeadingLevel.HEADING_2 }),
-            new Paragraph({ text: `Обработка данных осуществляется в следующих целях: ${data.features.includes('newsletter') ? 'рассылка информационных материалов, ' : ''}обработка заявок, связь с пользователем, улучшение качества обслуживания.`, spacing: { after: 200 } }),
+            new Paragraph({ text: `Персональные данные обрабатываются в следующих целях:` }),
+            ...buildFeatureList(d, [
+                { id: 'forms', text: '- Обработка запросов и заявок, оставленных через формы на сайте ${d.siteUrl}.' },
+                { id: 'mailing', text: '- Информирование о новых продуктах, услугах и мероприятиях (рассылка).' },
+                { id: 'analytics', text: '- Проведение статистических исследований и улучшение качества сервиса.' }
+            ], false, true),
 
             new Paragraph({ text: `3. Действия с данными`, heading: HeadingLevel.HEADING_2 }),
-            new Paragraph({ text: `Под обработкой персональных данных понимаются действия (операции) с персональными данными, включая сбор, запись, систематизацию, накопление, хранение, уточнение (обновление, изменение), извлечение, использование, передачу (распространение, предоставление, доступ), обезличивание, блокирование, удаление, уничтожение персональных данных.`, spacing: { after: 200 } }),
-
+            new Paragraph({ text: `В ходе обработки с персональными данными будут совершены следующие действия: сбор, запись, систематизация, накопление, хранение, уточнение (обновление, изменение), извлечение, использование, передача (предоставление, доступ), блокирование, удаление, уничтожение.` }),
+            
             new Paragraph({ text: `4. Срок действия`, heading: HeadingLevel.HEADING_2 }),
-            new Paragraph({ text: `Согласие действует до момента его отзыва в письменной форме либо до достижения целей обработки.`, spacing: { after: 200 } }),
-
-            new Paragraph({ text: `Дата: _______________                                     Подпись: _______________`, spacing: { after: 200 } })
+            new Paragraph({ text: `Согласие действует до момента его отзыва мной в письменной форме либо до достижения целей обработки. Отзыв согласия может быть направлен по адресу: ${d.email}.`)
         ];
     }
 
-    function generateNewsletterContent(data) {
+    function getConsentMailingContent(d) {
         return [
-            new Paragraph({ text: `Я выражаю свое согласие ${data.org.name} (ИНН ${data.org.inn}) на получение информационных рассылок на указанный мной адрес электронной почты или номер телефона.`, spacing: { after: 200 } }),
-            new Paragraph({ text: `1. Характер информации`, heading: HeadingLevel.HEADING_2 }),
-            new Paragraph({ text: `Рассылка может содержать информацию о новостях компании ${data.site.domain}, специальных предложениях, акциях и мероприятиях.`, spacing: { after: 200 } }),
-            new Paragraph({ text: `2. Частота отправок`, heading: HeadingLevel.HEADING_2 }),
-            new Paragraph({ text: `Рассылка осуществляется не чаще чем 1 раз в неделю (если иное не согласовано дополнительно).`, spacing: { after: 200 } }),
-            new Paragraph({ text: `3. Отзыв согласия`, heading: HeadingLevel.HEADING_2 }),
-            new Paragraph({ text: `Я могу отозвать свое согласие в любой момент, нажав на ссылку «Отписаться» в письме или направив запрос на адрес ${data.org.email}.`, spacing: { after: 200 } }),
-             new Paragraph({ text: `Дата: _______________                                     Подпись: _______________`, spacing: { after: 200 } })
+            new Paragraph({ text: `СОГЛАСИЕ НА ПОЛУЧЕНИЕ РАССЫЛКИ`, heading: HeadingLevel.HEADING_1, alignment: AlignmentType.CENTER }),
+            new Paragraph({ text: `Я выражаю свое согласие ${d.orgName} (ИНН ${d.inn}) на получение информационных и рекламных рассылок на указанный мной адрес электронной почты и/или номер телефона.` }),
+            new Paragraph({ text: `1. Характер рассылок` }),
+            new Paragraph({ text: `Рассылка может содержать информацию о:` }),
+            new Paragraph({ text: `- Новостях компании ${d.orgName}.` }),
+            new Paragraph({ text: `- Специальных предложениях, акциях и скидках.` }),
+            new Paragraph({ text: `- Полезных материалах по тематике сайта ${d.siteUrl}.` }),
+            new Paragraph({ text: `2. Частота отправок` }),
+            new Paragraph({ text: `Рассылка осуществляется не чаще 1 раза в неделю (если иное не согласовано отдельно).` }),
+            new Paragraph({ text: `3. Право на отказ` }),
+            new Paragraph({ text: `Я имею право отказаться от получения рассылки в любой момент, нажав на ссылку «Отписаться» в письме или направив запрос на адрес ${d.email}.`)
         ];
     }
 
-    function generateDistributionContent(data) {
+    function getConsentSpreadContent(d) {
         return [
-            new Paragraph({ text: `В соответствии с п. 1 ст. 10.1 ФЗ № 152 «О персональных данных» я даю отдельное согласие ${data.org.name} на распространение моих персональных данных.`, spacing: { after: 200 } }),
-            new Paragraph({ text: `1. Перечень данных для распространения`, heading: HeadingLevel.HEADING_2 }),
-            new Paragraph({ text: `Я разрешаю распространять следующие данные: ФИО, фото (при наличии), должность, контакты.`, spacing: { after: 200 } }),
-            new Paragraph({ text: `2. Условия распространения`, heading: HeadingLevel.HEADING_2 }),
-            new Paragraph({ text: `Распространение осуществляется путем размещения на сайте ${data.site.domain} и в социальных сетях компании.`, spacing: { after: 200 } }),
-            new Paragraph({ text: `3. Запреты`, heading: HeadingLevel.HEADING_2 }),
-            new Paragraph({ text: `Я запрещаю обработку и распространение моих данных в целях продвижения товаров, работ, услуг третьих лиц на рынке.`, spacing: { after: 200 } }),
-            new Paragraph({ text: `Дата: _______________                                     Подпись: _______________`, spacing: { after: 200 } })
+            new Paragraph({ text: `СОГЛАСИЕ НА РАСПРОСТРАНЕНИЕ ПЕРСОНАЛЬНЫХ ДАННЫХ`, heading: HeadingLevel.HEADING_1, alignment: AlignmentType.CENTER }),
+            new Paragraph({ text: `В соответствии со ст. 10.1 ФЗ-152, я даю отдельное согласие на распространение моих персональных данных неограниченному кругу лиц.` }),
+            new Paragraph({ text: `1. Перечень данных для распространения` }),
+            new Paragraph({ text: `Я разрешаю распространять следующие данные:` }),
+            new Paragraph({ text: `- Фамилия Имя (Инициалы).` }),
+            new Paragraph({ text: `- Фотография (при наличии).` }),
+            new Paragraph({ text: `- Должность / Статус.` }),
+            new Paragraph({ text: `2. Цель распространения` }),
+            new Paragraph({ text: `Данные распространяются в целях:` }),
+            new Paragraph({ text: `- Публикации отзывов на сайте ${d.siteUrl}.` }),
+            new Paragraph({ text: `- Размещения в кейсах и портфолио.` }),
+            new Paragraph({ text: `- Упоминания в социальных сетях и маркетинговых материалах.` }),
+            new Paragraph({ text: `3. Запреты` }),
+            new Paragraph({ text: `Я запрещаю обработку и распространение моих данных в целях продвижения товаров, работ, услуг на рынке способом, не соответствующим моим интересам.` }),
+            new Paragraph({ text: `Согласие может быть отозвано в любой момент путем направления уведомления на ${d.email}.`)
         ];
     }
 
-    function generateOfferContent(data) {
+    function getUserAgreementContent(d) {
         return [
+            new Paragraph({ text: `ПОЛЬЗОВАТЕЛЬСКОЕ СОГЛАШЕНИЕ`, heading: HeadingLevel.HEADING_1, alignment: AlignmentType.CENTER }),
+            new Paragraph({ text: `на использование сайта ${d.siteUrl}`, heading: HeadingLevel.HEADING_3, alignment: AlignmentType.CENTER }),
             new Paragraph({ text: `1. Общие положения`, heading: HeadingLevel.HEADING_2 }),
-            new Paragraph({ text: `Настоящее предложение (далее – Оферта) является официальным предложением ${data.org.name} (далее – Продавец/Исполнитель) заключить договор на оказание услуг/продажу товаров любому физическому лицу (далее – Покупатель/Заказчик) на условиях, определенных в настоящей Оферте.`, spacing: { after: 200 } }),
-            new Paragraph({ text: `1.1. В соответствии с п. 2 ст. 437 ГК РФ, в случае принятия изложенных ниже условий и оплаты товаров/услуг, физическое лицо, производящее акцепт этой оферты, становится Покупателем.`, spacing: { after: 200 } }),
-            new Paragraph({ text: `1.2. Адрес сайта: ${data.site.domain}.`, spacing: { after: 200 } }),
+            new Paragraph({ text: `Настоящее Пользовательское соглашение (далее – Соглашение) регулирует отношения между ${d.orgName} (далее – Администрация) и пользователем (далее – Пользователь) по использованию сайта ${d.siteUrl}.` }),
+            new Paragraph({ text: `Использование сайта означает полное и безоговорочное принятие условий настоящего Соглашения.` }),
+            
+            new Paragraph({ text: `2. Предмет соглашения`, heading: HeadingLevel.HEADING_2 }),
+            new Paragraph({ text: `Администрация предоставляет Пользователю доступ к материалам сайта, функционалу форм обратной связи, а также иным сервисам.` }),
+            ...buildFeatureList(d, [
+                { id: 'registration', text: 'При регистрации Пользователь обязуется предоставлять достоверную информацию.' },
+                { id: 'payment', text: 'Оплата товаров/услуг производится через защищенные шлюзы платежных систем.' }
+            ], true),
 
-            new Paragraph({ text: `2. Предмет договора`, heading: HeadingLevel.HEADING_2 }),
-            new Paragraph({ text: `2.1. Продавец обязуется передать товар/оказать услугу, а Покупатель обязуется оплатить и принять товар/услугу на условиях настоящей Оферты.`, spacing: { after: 200 } }),
-
-            new Paragraph({ text: `3. Порядок оплаты`, heading: HeadingLevel.HEADING_2 }),
-            new Paragraph({ text: `3.1. Оплата товаров/услуг производится способами, указанными на сайте в разделе оформления заказа.`, spacing: { after: 200 } }),
-
-            new Paragraph({ text: `4. Возврат и обмен`, heading: HeadingLevel.HEADING_2 }),
-            new Paragraph({ text: `4.1. Возврат товара надлежащего качества возможен в случае, если сохранены его товарный вид, потребительские свойства, а также документ, подтверждающий факт и условия покупки.`, spacing: { after: 200 } }),
-
-            new Paragraph({ text: `5. Реквизиты Исполнителя`, heading: HeadingLevel.HEADING_2 }),
-            new Paragraph({ text: `${data.org.name}\nИНН: ${data.org.inn}\nОГРН: ${data.org.ogrn}\nАдрес: ${data.org.address}\nEmail: ${data.org.email}`, spacing: { after: 200 } })
+            new Paragraph({ text: `3. Обязательства Пользователя`, heading: HeadingLevel.HEADING_2 }),
+            new Paragraph({ text: `Пользователь обязуется:` }),
+            new Paragraph({ text: `- Не использовать сайт для рассылки спама и вредоносного ПО.` }),
+            new Paragraph({ text: `- Не нарушать права интеллектуальной собственности Администрации.` }),
+            new Paragraph({ text: `- Соблюдать нормы законодательства РФ.` }),
+            
+            new Paragraph({ text: `4. Интеллектуальная собственность`, heading: HeadingLevel.HEADING_2 }),
+            new Paragraph({ text: `Все материалы сайта (тексты, изображения, код) являются собственностью ${d.orgName} и охраняются законом.` }),
+            
+            new Paragraph({ text: `5. Ответственность сторон`, heading: HeadingLevel.HEADING_2 }),
+            new Paragraph({ text: `Администрация не несет ответственности за убытки Пользователя, возникшие в результате использования или невозможности использования сайта, за исключением случаев, предусмотренных законодательством РФ.` }),
+            
+            new Paragraph({ text: `6. Реквизиты и контакты`, heading: HeadingLevel.HEADING_2 }),
+            new Paragraph({ text: `Владелец сайта: ${d.orgName}` }),
+            new Paragraph({ text: `ИНН: ${d.inn}` }),
+            new Paragraph({ text: `Адрес: ${d.address}` }),
+            new Paragraph({ text: `Email: ${d.email}` })
         ];
     }
 
-    function getFeaturesDescription(features) {
-        // Вспомогательная функция, если нужно динамически менять текст в зависимости от галочек
-        // Сейчас логика вшита напрямую в генераторы для простоты
-        return "";
+    // Вспомогательная функция для списков
+    function buildFeatureList(data, items, isBullet = false, skipIfFalse = false) {
+        let result = [];
+        items.forEach(item => {
+            if (skipIfFalse && !data.features[item.id]) return;
+            
+            // Если чекбокс не выбран и мы не в режиме "показать всё", пропускаем
+            if (!data.features[item.id] && item.id !== 'forms') { 
+                 // forms обычно базовый, но если логика требует строгого фильтра, можно усложнить
+                 // Сейчас оставим базовые пункты всегда, если они не зависят от фич, 
+                 // но в этой функции мы фильтруем по item.id
+                 if (item.id && !data.features[item.id]) return;
+            }
+
+            if (isBullet) {
+                result.push(new Paragraph({ 
+                    children: [new TextRun({ text: item.text })],
+                    bullet: { level: 0 }
+                }));
+            } else {
+                result.push(new Paragraph({ text: item.text }));
+            }
+        });
+        return result;
     }
 </script>
 

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор документов 152-ФЗ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📄 Генератор документов по 152-ФЗ</h1>
+            <p class="subtitle">Создайте юридически корректные документы для вашего сайта за 5 минут</p>
+        </header>
+
+        <form action="/generate" method="POST" id="docForm">
+            <!-- Шаг 1: Выбор типа документа -->
+            <section class="form-section">
+                <h2>1. Выберите тип документа</h2>
+                <div class="form-group">
+                    <select name="doc_type" id="doc_type" required class="form-control">
+                        <option value="">-- Выберите документ --</option>
+                        {% for key, name in document_types.items() %}
+                        <option value="{{ key }}">{{ name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </section>
+
+            <!-- Шаг 2: Данные организации -->
+            <section class="form-section">
+                <h2>2. Данные вашей организации</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="org_name">Наименование организации / ИП *</label>
+                        <input type="text" name="org_name" id="org_name" required 
+                               placeholder="ООО «Ромашка» или Иванов И.И." class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="inn">ИНН</label>
+                        <input type="text" name="inn" id="inn" placeholder="1234567890" 
+                               class="form-control" pattern="[0-9]{10,12}">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="org_address">Юридический адрес *</label>
+                        <input type="text" name="org_address" id="org_address" required 
+                               placeholder="г. Москва, ул. Примерная, д. 1" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="org_email">Email для связи *</label>
+                        <input type="email" name="org_email" id="org_email" required 
+                               placeholder="info@example.ru" class="form-control">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="org_phone">Телефон</label>
+                        <input type="tel" name="org_phone" id="org_phone" 
+                               placeholder="+7 (999) 000-00-00" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="site_url">Адрес сайта *</label>
+                        <input type="url" name="site_url" id="site_url" required 
+                               placeholder="https://mysite.ru" class="form-control">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="city">Год издания *</label>
+                        <input type="number" name="year" id="year" required 
+                               value="2024" min="2020" max="2030" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="date">Дата документа</label>
+                        <input type="text" name="date" id="date" 
+                               placeholder="1 января" class="form-control">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Шаг 3: Функционал сайта -->
+            <section class="form-section">
+                <h2>3. Что используется на вашем сайте?</h2>
+                <p class="hint">Отметьте все пункты, которые применяются к вашему сайту</p>
+                
+                <div class="checkbox-grid">
+                    {% for key, label in site_features.items() %}
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="features" value="{{ key }}">
+                        <span>{{ label }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <!-- Шаг 4: Какие данные собираются -->
+            <section class="form-section">
+                <h2>4. Какие персональные данные вы собираете?</h2>
+                
+                <div class="checkbox-grid">
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="collect_fio" value="да" id="collect_fio">
+                        <span>ФИО</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="collect_email" value="да" id="collect_email" checked>
+                        <span>Email</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="collect_phone" value="да" id="collect_phone">
+                        <span>Номер телефона</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="collect_address" value="да" id="collect_address">
+                        <span>Почтовый адрес</span>
+                    </label>
+                </div>
+            </section>
+
+            <!-- Дополнительные поля для согласия на рассылку -->
+            <section class="form-section" id="newsletter_section" style="display: none;">
+                <h2>5. Email для рассылки</h2>
+                <div class="form-group">
+                    <label for="user_email">Email пользователя (для шаблона согласия)</label>
+                    <input type="email" name="user_email" id="user_email" 
+                           placeholder="user@example.com" class="form-control">
+                </div>
+            </section>
+
+            <!-- Кнопка отправки -->
+            <section class="form-section submit-section">
+                <button type="submit" class="btn-submit">
+                    📥 Сгенерировать и скачать документ
+                </button>
+                <p class="hint">Документ будет сформирован в формате .docx (Microsoft Word)</p>
+            </section>
+        </form>
+
+        <footer>
+            <p>Сервис создан для соответствия требованиям Федерального закона № 152-ФЗ «О персональных данных»</p>
+            <p class="disclaimer">⚠️ Перед использованием рекомендуется проконсультироваться с юристом</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

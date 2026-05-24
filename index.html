@@ -4,22 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Генератор документов 152-ФЗ</title>
-    <!-- Подключаем библиотеки для работы с DOCX -->
     <script src="https://unpkg.com/docx@7.1.0/build/index.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333; line-height: 1.6; padding: 20px; }
-        .container { max-width: 800px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; padding: 20px; color: #333; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         h1 { text-align: center; color: #2c3e50; }
         .form-group { margin-bottom: 20px; }
         label { display: block; margin-bottom: 8px; font-weight: bold; }
-        input[type="text"], input[type="email"], input[type="tel"], select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        input[type="text"], input[type="email"], select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
         .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .checkbox-item { display: flex; align-items: center; gap: 8px; background: #f9f9f9; padding: 10px; border-radius: 4px; }
+        .checkbox-item { display: flex; align-items: center; gap: 8px; background: #f9f9f9; padding: 8px; border-radius: 4px; }
         .checkbox-item input { width: auto; }
-        button { display: block; width: 100%; padding: 15px; background-color: #3498db; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; transition: background 0.3s; }
-        button:hover { background-color: #2980b9; }
-        .hidden { display: none; }
+        button { display: block; width: 100%; padding: 15px; background-color: #27ae60; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; transition: background 0.3s; }
+        button:hover { background-color: #219150; }
         .note { font-size: 0.9em; color: #666; margin-top: 5px; }
     </style>
 </head>
@@ -27,39 +25,42 @@
 
 <div class="container">
     <h1>Генератор документов 152-ФЗ</h1>
-    <p style="text-align: center; color: #666;">Заполните данные и скачайте готовый документ для размещения на сайте.</p>
+    <p style="text-align: center; color: #666;">Заполните данные и скачайте готовый документ</p>
 
     <div class="form-group">
         <label for="docType">Выберите тип документа:</label>
-        <select id="docType" onchange="toggleFields()">
-            <option value="policy_pd">Политика обработки персональных данных</option>
-            <option value="policy_cookie">Политика использования Cookie</option>
-            <option value="consent_process">Согласие на обработку ПДн (для форм)</option>
-            <option value="consent_news">Согласие на рассылку (для форм)</option>
-            <option value="consent_public">Согласие на распространение ПДн (для форм)</option>
-            <option value="user_agreement">Пользовательское соглашение</option>
+        <select id="docType">
+            <option value="policy">Политика обработки ПДн</option>
+            <option value="cookie">Политика использования Cookie</option>
+            <option value="consent">Согласие на обработку ПДн (для форм)</option>
+            <option value="newsletter">Согласие на рассылку</option>
+            <option value="distribution">Согласие на распространение ПДн</option>
+            <option value="agreement">Пользовательское соглашение</option>
         </select>
     </div>
 
     <div class="form-group">
-        <label>Реквизиты организации / ИП:</label>
-        <input type="text" id="orgName" placeholder="Название организации или ФИО ИП" style="margin-bottom: 10px;">
-        <input type="text" id="inn" placeholder="ИНН">
-        <input type="text" id="ogrn" placeholder="ОГРН/ОГРНИП" style="margin-top: 10px;">
-        <input type="text" id="address" placeholder="Юридический адрес" style="margin-top: 10px;">
-        <input type="email" id="email" placeholder="Email для связи" style="margin-top: 10px;">
-        <input type="text" id="siteUrl" placeholder="Адрес сайта (домен)" style="margin-top: 10px;">
+        <label>Данные организации (Оператор):</label>
+        <input type="text" id="orgName" placeholder="Название (например, ООО 'Ромашка')" required>
+        <input type="text" id="orgInn" placeholder="ИНН" style="margin-top: 10px;">
+        <input type="text" id="orgAddress" placeholder="Юридический адрес" style="margin-top: 10px;">
+        <input type="email" id="orgEmail" placeholder="Email для связи" style="margin-top: 10px;">
+    </div>
+
+    <div class="form-group">
+        <label>Данные сайта:</label>
+        <input type="text" id="siteUrl" placeholder="Адрес сайта (https://mysite.ru)" required>
     </div>
 
     <div class="form-group">
         <label>Что используется на сайте? (Отметьте нужное):</label>
         <div class="checkbox-group">
-            <div class="checkbox-item"><input type="checkbox" id="useForms"> Формы обратной связи / Заявки</div>
-            <div class="checkbox-item"><input type="checkbox" id="useCookies"> Файлы Cookie</div>
-            <div class="checkbox-item"><input type="checkbox" id="useAnalytics"> Яндекс.Метрика / Google Analytics</div>
-            <div class="checkbox-item"><input type="checkbox" id="useNewsletter"> Рассылка новостей</div>
-            <div class="checkbox-item"><input type="checkbox" id="usePublicData"> Публикация отзывов/фото (распространение)</div>
-            <div class="checkbox-item"><input type="checkbox" id="useCalls"> Звонок по клику / Заказ звонка</div>
+            <div class="checkbox-item"><input type="checkbox" id="useForms"> Формы обратной связи</div>
+            <div class="checkbox-item"><input type="checkbox" id="useCookies"> Cookie файлы</div>
+            <div class="checkbox-item"><input type="checkbox" id="useAnalytics"> Яндекс.Метрика / GA</div>
+            <div class="checkbox-item"><input type="checkbox" id="usePayment"> Онлайн-оплата</div>
+            <div class="checkbox-item"><input type="checkbox" id="useRegistration"> Регистрация пользователей</div>
+            <div class="checkbox-item"><input type="checkbox" id="useCalls"> Заказ звонка</div>
         </div>
     </div>
 
@@ -67,149 +68,153 @@
 </div>
 
 <script>
-    function toggleFields() {
-        // Логика скрытия/показа специфичных полей может быть добавлена здесь
-    }
+    const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } = docx;
 
     function generateDocument() {
         const docType = document.getElementById('docType').value;
-        const orgName = document.getElementById('orgName').value || '[НАЗВАНИЕ ОРГАНИЗАЦИИ]';
-        const inn = document.getElementById('inn').value || '[ИНН]';
-        const ogrn = document.getElementById('ogrn').value || '[ОГРН]';
-        const address = document.getElementById('address').value || '[АДРЕС]';
-        const email = document.getElementById('email').value || '[EMAIL]';
-        const siteUrl = document.getElementById('siteUrl').value || '[АДРЕС САЙТА]';
+        const orgName = document.getElementById('orgName').value || "[Название]";
+        const orgInn = document.getElementById('orgInn').value || "[ИНН]";
+        const orgAddress = document.getElementById('orgAddress').value || "[Адрес]";
+        const orgEmail = document.getElementById('orgEmail').value || "[Email]";
+        const siteUrl = document.getElementById('siteUrl').value || "[Адрес Сайта]";
 
-        // Чекбоксы
-        const checks = {
+        const options = {
             forms: document.getElementById('useForms').checked,
             cookies: document.getElementById('useCookies').checked,
             analytics: document.getElementById('useAnalytics').checked,
-            newsletter: document.getElementById('useNewsletter').checked,
-            publicData: document.getElementById('usePublicData').checked,
+            payment: document.getElementById('usePayment').checked,
+            registration: document.getElementById('useRegistration').checked,
             calls: document.getElementById('useCalls').checked
         };
 
         let content = [];
 
-        // --- ГЕНЕРАЦИЯ ТЕКСТА В ЗАВИСИМОСТИ ОТ ТИПА ---
-        
-        if (docType === 'policy_pd') {
-            content = [
-                new docx.Paragraph({ text: `ПОЛИТИКА ОБРАБОТКИ ПЕРСОНАЛЬНЫХ ДАННЫХ`, heading: docx.HeadingLevel.HEADING_1, alignment: docx.AlignmentType.CENTER }),
-                new docx.Paragraph({ text: `г. ${new Date().toLocaleDateString('ru-RU', {day: 'numeric', month: 'long', year: 'numeric'})}`, alignment: docx.AlignmentType.RIGHT }),
-                new docx.Paragraph({ text: `1. ОБЩИЕ ПОЛОЖЕНИЯ`, heading: docx.HeadingLevel.HEADING_2 }),
-                new docx.Paragraph({ text: `Настоящая политика обработки персональных данных составлена в соответствии с требованиями Федерального закона от 27.07.2006. № 152-ФЗ «О персональных данных» и определяет порядок обработки персональных данных и меры по обеспечению безопасности персональных данных, предпринимаемые ${orgName} (далее – Оператор).` }),
-                new docx.Paragraph({ text: `1.1. Оператор ставит своей важнейшей целью и условием осуществления своей деятельности соблюдение прав и свобод человека и гражданина при обработке его персональных данных.` }),
-                new docx.Paragraph({ text: `1.2. Настоящая политика Оператора в отношении обработки персональных данных применяется ко всей информации, которую Оператор может получить о посетителях веб-сайта ${siteUrl}.` }),
-                
-                new docx.Paragraph({ text: `2. ОСНОВНЫЕ ПОНЯТИЯ`, heading: docx.HeadingLevel.HEADING_2 }),
-                new docx.Paragraph({ text: `2.1. Веб-сайт – совокупность графических и информационных материалов, а также программ для ЭВМ и баз данных, обеспечивающих их доступность в сети интернет по сетевому адресу ${siteUrl}.` }),
-                new docx.Paragraph({ text: `2.2. Пользователь – любой посетитель веб-сайта ${siteUrl}.` }),
-                
-                new docx.Paragraph({ text: `3. ОПЕРАТОР МОЖЕТ ОБРАБАТЫВАТЬ СЛЕДУЮЩИЕ ПЕРСОНАЛЬНЫЕ ДАННЫЕ ПОЛЬЗОВАТЕЛЯ`, heading: docx.HeadingLevel.HEADING_2 }),
-                new docx.Paragraph({ text: `3.1. Фамилия, имя, отчество.` }),
-                new docx.Paragraph({ text: `3.2. Электронный адрес.` }),
-                new docx.Paragraph({ text: `3.3. Номера телефонов.` }),
-                new docx.Paragraph({ text: `3.4. Также на сайте происходит сбор и обработка обезличенных данных о посетителях (в т.ч. файлов «cookie») с помощью сервисов интернет-статистики (Яндекс Метрика и Гугл Аналитика и других).` }),
-                
-                new docx.Paragraph({ text: `4. ЦЕЛИ ОБРАБОТКИ`, heading: docx.HeadingLevel.HEADING_2 }),
-                new docx.Paragraph({ text: `4.1. Цель обработки персональных данных Пользователя:` }),
-                new docx.BulletList({
-                    children: [
-                        new docx.Paragraph({ text: `Информирование Пользователя посредством отправки электронных писем.` }),
-                        new docx.Paragraph({ text: `Предоставление доступа Пользователю к сервисам, информации и/или материалам, содержащимся на веб-сайте.` }),
-                        new docx.Paragraph({ text: `Улучшение качества сайта, удобства его использования.` }),
-                        new docx.Paragraph({ text: `Составление статистических данных.` })
-                    ]
-                }),
-                
-                new docx.Paragraph({ text: `5. ПРАВОВЫЕ ОСНОВАНИЯ`, heading: docx.HeadingLevel.HEADING_2 }),
-                new docx.Paragraph({ text: `5.1. Оператор обрабатывает персональные данные Пользователя только в случае их заполнения и/или отправки Пользователем самостоятельно через специальные формы, расположенные на сайте ${siteUrl}. Заполняя соответствующие формы, Пользователь выражает свое согласие с данной Политикой.` }),
-                
-                new docx.Paragraph({ text: `6. ПОРЯДОК СБОРА, ХРАНЕНИЯ, ПЕРЕДАЧИ И ДРУГИХ ВИДОВ ОБРАБОТКИ ПЕРСОНАЛЬНЫХ ДАННЫХ`, heading: docx.HeadingLevel.HEADING_2 }),
-                new docx.Paragraph({ text: `6.1. Безопасность персональных данных, которые обрабатываются Оператором, обеспечивается путем реализации правовых, организационных и технических мер, необходимых для выполнения в полном объеме требований действующего законодательства.` }),
-                new docx.Paragraph({ text: `6.2. Оператор обеспечивает сохранность персональных данных и принимает все возможные меры, исключающие доступ к персональным данным неуполномоченных лиц.` }),
-                new docx.Paragraph({ text: `6.3. Персональные данные Пользователя никогда, ни при каких условиях не будут переданы третьим лицам, за исключением случаев, связанных с исполнением действующего законодательства.` }),
-                
-                new docx.Paragraph({ text: `7. ЗАКЛЮЧИТЕЛЬНЫЕ ПОЛОЖЕНИЯ`, heading: docx.HeadingLevel.HEADING_2 }),
-                new docx.Paragraph({ text: `7.1. Пользователь может получить любые разъяснения по интересующим вопросам, касающимся обработки его персональных данных, обратившись к Оператору с помощью электронной почты ${email}.` }),
-                new docx.Paragraph({ text: `7.2. В данном документе будут отражены любые изменения политики обработки персональных данных Оператором. Политика действует бессрочно до замены ее новой версией.` })
-            ];
-        } 
-        else if (docType === 'policy_cookie') {
-            content = [
-                new docx.Paragraph({ text: `ПОЛИТИКА В ОТНОШЕНИИ ФАЙЛОВ COOKIE`, heading: docx.HeadingLevel.HEADING_1, alignment: docx.AlignmentType.CENTER }),
-                new docx.Paragraph({ text: `1. Мы используем файлы cookie для анализа трафика и улучшения работы сайта ${siteUrl}.` }),
-                new docx.Paragraph({ text: `2. Cookie — это небольшой текстовый файл, который сохраняется на вашем устройстве при посещении сайта.` }),
-                new docx.Paragraph({ text: `3. Мы используем следующие типы cookie:` }),
-                new docx.BulletList({
-                    children: [
-                        new docx.Paragraph({ text: `Технические cookie: необходимы для работы сайта.` }),
-                        new docx.Paragraph({ text: `Аналитические cookie: помогают нам понять, как пользователи взаимодействуют с сайтом (Яндекс.Метрика, Google Analytics).` })
-                    ]
-                }),
-                new docx.Paragraph({ text: `4. Вы можете управлять настройками cookie в своем браузере. Отключение cookie может привести к неполной функциональности сайта.` }),
-                new docx.Paragraph({ text: `5. Продолжая использовать сайт, вы соглашаетесь с использованием файлов cookie.` })
-            ];
-        }
-        else if (docType === 'consent_process') {
-            let purposes = "обработки персональных данных";
-            if (checks.calls) purposes += ", организации обратного звонка";
-            if (checks.forms) purposes += ", обработки заявки";
-            
-            content = [
-                new docx.Paragraph({ text: `СОГЛАСИЕ НА ОБРАБОТКУ ПЕРСОНАЛЬНЫХ ДАННЫХ`, heading: docx.HeadingLevel.HEADING_1, alignment: docx.AlignmentType.CENTER }),
-                new docx.Paragraph({ text: `Я, субъект персональных данных, в соответствии с Федеральным законом от 27.07.2006 года № 152-ФЗ «О персональных данных» предоставляю согласие на обработку моих персональных данных, указанных при заполнении веб-формы на сайте ${siteUrl}, владельцем которого является ${orgName}.` }),
-                new docx.Paragraph({ text: `Цели обработки: ${purposes}.` }),
-                new docx.Paragraph({ text: `С перечнем действий с персональными данными, на которые дается согласие, можно ознакомиться по ссылке: [Ссылка на Политику конфиденциальности].` }),
-                new docx.Paragraph({ text: `Согласие действует до момента его отзыва.` })
-            ];
-        }
-        else if (docType === 'consent_news') {
-            content = [
-                new docx.Paragraph({ text: `СОГЛАСИЕ НА РАССЫЛКУ`, heading: docx.HeadingLevel.HEADING_1, alignment: docx.AlignmentType.CENTER }),
-                new docx.Paragraph({ text: `Я даю свое согласие ${orgName} на получение информационных сообщений и рекламных материалов на мой адрес электронной почты и/или номер телефона.` }),
-                new docx.Paragraph({ text: `Отписка от рассылки возможна в любой момент по ссылке в письме или через обращение на ${email}.` })
-            ];
-        }
-        else if (docType === 'consent_public') {
-            content = [
-                new docx.Paragraph({ text: `СОГЛАСИЕ НА РАСПРОСТРАНЕНИЕ ПЕРСОНАЛЬНЫХ ДАННЫХ`, heading: docx.HeadingLevel.HEADING_1, alignment: docx.AlignmentType.CENTER }),
-                new docx.Paragraph({ text: `Я даю согласие на неограниченный круг лиц на распространение моих персональных данных (ФИО, отзыв, фото) на сайте ${siteUrl}.` }),
-                new docx.Paragraph({ text: `Согласие может быть отозвано мной в любой момент путем направления письменного заявления на адрес ${email}.` })
-            ];
-        }
-        else if (docType === 'user_agreement') {
-            content = [
-                new docx.Paragraph({ text: `ПОЛЬЗОВАТЕЛЬСКОЕ СОГЛАШЕНИЕ`, heading: docx.HeadingLevel.HEADING_1, alignment: docx.AlignmentType.CENTER }),
-                new docx.Paragraph({ text: `1. ОБЩИЕ ПОЛОЖЕНИЯ`, heading: docx.HeadingLevel.HEADING_2 }),
-                new docx.Paragraph({ text: `1.1. Настоящее Пользовательское соглашение регулирует порядок использования сайта ${siteUrl} (далее – Сайт).` }),
-                new docx.Paragraph({ text: `1.2. Владелец сайта: ${orgName}, ИНН: ${inn}.` }),
-                new docx.Paragraph({ text: `2. ПРЕДМЕТ СОГЛАШЕНИЯ`, heading: docx.HeadingLevel.HEADING_2 }),
-                new docx.Paragraph({ text: `2.1. Сайт предоставляет пользователям информацию о товарах/услугах и возможность оформления заказов.` }),
-                new docx.Paragraph({ text: `3. ИНТЕЛЛЕКТУАЛЬНАЯ СОБСТВЕННОСТЬ`, heading: docx.HeadingLevel.HEADING_2 }),
-                new docx.Paragraph({ text: `3.1. Все материалы Сайта являются собственностью Владельца.` }),
-                new docx.Paragraph({ text: `4. ОТВЕТСТВЕННОСТЬ`, heading: docx.HeadingLevel.HEADING_2 }),
-                new docx.Paragraph({ text: `4.1. Владелец не несет ответственности за временные сбои в работе Сайта.` }),
-                new docx.Paragraph({ text: `5. ЗАКЛЮЧИТЕЛЬНЫЕ ПОЛОЖЕНИЯ`, heading: docx.HeadingLevel.HEADING_2 }),
-                new docx.Paragraph({ text: `5.1. Используя Сайт, Пользователь выражает полное согласие с условиями данного Соглашения.` })
-            ];
-        }
+        content.push(new Paragraph({
+            text: getDocTitle(docType),
+            heading: HeadingLevel.TITLE,
+            alignment: AlignmentType.CENTER,
+            spacing: { after: 400 }
+        }));
 
-        // Создаем документ
-        const doc = new docx.Document({
+        const bodyText = getBodyText(docType, orgName, orgInn, orgAddress, orgEmail, siteUrl, options);
+
+        bodyText.forEach(line => {
+            if (line.isHeading) {
+                content.push(new Paragraph({
+                    text: line.text,
+                    heading: HeadingLevel.HEADING_2,
+                    spacing: { before: 300, after: 100 }
+                }));
+            } else {
+                content.push(new Paragraph({
+                    children: [new TextRun({ text: line.text, break: 1 })],
+                    spacing: { after: 200 }
+                }));
+            }
+        });
+
+        const doc = new Document({
             sections: [{
                 properties: {},
                 children: content
             }]
         });
 
-        // Генерируем и скачиваем
-        docx.Packer.toBlob(doc).then(blob => {
-            const fileName = `document_${docType}.docx`;
-            saveAs(blob, fileName);
+        Packer.toBlob(doc).then(blob => {
+            saveAs(blob, `${getDocTitle(docType)}.docx`);
         });
+    }
+
+    function getDocTitle(type) {
+        switch(type) {
+            case 'policy': return 'ПОЛИТИКА ОБРАБОТКИ ПЕРСОНАЛЬНЫХ ДАННЫХ';
+            case 'cookie': return 'ПОЛИТИКА ИСПОЛЬЗОВАНИЯ COOKIE';
+            case 'consent': return 'СОГЛАСИЕ НА ОБРАБОТКУ ПЕРСОНАЛЬНЫХ ДАННЫХ';
+            case 'newsletter': return 'СОГЛАСИЕ НА РАССЫЛКУ';
+            case 'distribution': return 'СОГЛАСИЕ НА РАСПРОСТРАНЕНИЕ ПЕРСОНАЛЬНЫХ ДАННЫХ';
+            case 'agreement': return 'ПОЛЬЗОВАТЕЛЬСКОЕ СОГЛАШЕНИЕ';
+            default: return 'ДОКУМЕНТ';
+        }
+    }
+
+    function getBodyText(type, org, inn, address, email, url, opt) {
+        let text = [];
+
+        if (type === 'policy') {
+            text.push({ isHeading: true, text: '1. Общие положения' });
+            text.push({ isHeading: false, text: `Настоящая политика обработки персональных данных составлена в соответствии с требованиями Федерального закона от 27.07.2006. № 152-ФЗ «О персональных данных» и определяет порядок обработки персональных данных и меры по обеспечению безопасности персональных данных, предпринимаемые ${org} (далее – Оператор).` });
+            text.push({ isHeading: false, text: `1.1. Оператор ставит своей важнейшей целью и условием осуществления своей деятельности соблюдение прав и свобод человека и гражданина при обработке его персональных данных, в том числе защиты прав на неприкосновенность частной жизни, личную и семейную тайну.` });
+            text.push({ isHeading: false, text: `1.2. Настоящая политика Оператора в отношении обработки персональных данных (далее – Политика) применяется ко всей информации, которую Оператор может получить о посетителях веб-сайта ${url}.` });
+
+            text.push({ isHeading: true, text: '2. Основные понятия' });
+            text.push({ isHeading: false, text: '2.1. Персональные данные – любая информация, относящаяся прямо или косвенно к определенному или определяемому Пользователю веб-сайта.' });
+            text.push({ isHeading: false, text: '2.2. Обработка персональных данных – любое действие (операция) или совокупность действий (операций), совершаемых с использованием средств автоматизации или без них с персональными данными.' });
+
+            text.push({ isHeading: true, text: '3. Цели обработки' });
+            let goals = '3.1. Цель обработки персональных данных Пользователя:\n';
+            if (opt.forms) goals += '- Предоставление доступа Пользователю к сервисам, информации и/или материалам, содержащимся на веб-сайте (формы обратной связи).\n';
+            if (opt.analytics) goals += '- Анализ посещаемости веб-сайта и улучшение качества сервиса (Яндекс.Метрика, Google Analytics).\n';
+            if (opt.registration) goals += '- Регистрация пользователя на веб-сайте.\n';
+            if (opt.payment) goals += '- Оформление заказов и оплата услуг.\n';
+            text.push({ isHeading: false, text: goals });
+
+            text.push({ isHeading: true, text: '4. Контакты' });
+            text.push({ isHeading: false, text: `Актуальная информация об Операторе:\nНаименование: ${org}\nИНН: ${inn}\nАдрес: ${address}\nEmail: ${email}` });
+
+        } else if (type === 'cookie') {
+            text.push({ isHeading: true, text: '1. Что такое Cookie' });
+            text.push({ isHeading: false, text: 'Cookie — это небольшой текстовый файл, который сохраняется на вашем компьютере или мобильном устройстве, когда вы открываете веб-сайт.' });
+
+            text.push({ isHeading: true, text: '2. Какие Cookie мы используем' });
+            let cookieTypes = 'Мы используем следующие виды файлов:\n';
+            if (opt.analytics) cookieTypes += '- Аналитические Cookie: помогают нам понять, как пользователи взаимодействуют с сайтом (Яндекс.Метрика, Google Analytics).\n';
+            if (opt.forms) cookieTypes += '- Функциональные Cookie: запоминают ваш выбор (например, язык или регион).\n';
+            text.push({ isHeading: false, text: cookieTypes });
+
+            text.push({ isHeading: true, text: '3. Управление Cookie' });
+            text.push({ isHeading: false, text: `Вы можете контролировать и/или удалять файлы cookie по своему усмотрению. Подробности см. на странице aboutcookies.org. Вы можете удалить все файлы cookie, которые уже есть на вашем компьютере, и настроить большинство браузеров так, чтобы они не позволяли сохранять их.` });
+            text.push({ isHeading: false, text: `Владелец сайта: ${org}, Email: ${email}` });
+
+        } else if (type === 'consent') {
+            text.push({ isHeading: false, text: `Я, субъект персональных данных, в соответствии с Федеральным законом от 27.07.2006 года № 152-ФЗ «О персональных данных», даю свое согласие ${org} (ИНН: ${inn}), расположенному по адресу: ${address}, на обработку моих персональных данных.` });
+            text.push({ isHeading: false, text: 'Перечень персональных данных, на обработку которых дается согласие:' });
+            text.push({ isHeading: false, text: '- Фамилия, имя, отчество;\n- Номер телефона;\n- Адрес электронной почты;\n- Иные данные, предоставляемые в формах на сайте.' });
+
+            let purposes = 'Цели обработки:\n';
+            if (opt.forms) purposes += '- Обработка запросов через формы обратной связи.\n';
+            if (opt.calls) purposes += '- Перезвон мне.\n';
+            if (opt.registration) purposes += '- Регистрация в личном кабинете.\n';
+            text.push({ isHeading: false, text: purposes });
+
+            text.push({ isHeading: false, text: 'Согласие действует до момента его отзыва в письменной форме.' });
+
+        } else if (type === 'newsletter') {
+            text.push({ isHeading: false, text: `Я выражаю свое согласие ${org} (ИНН: ${inn}) на получение информационных рассылок на адрес моей электронной почты: ___________________.` });
+            text.push({ isHeading: false, text: 'Под рассылкой понимается регулярная отправка информационных сообщений о новостях компании, специальных предложениях, товарах и услугах.' });
+            text.push({ isHeading: false, text: 'Я могу отписаться от рассылки в любой момент, перейдя по ссылке в письме или направив запрос на email: ' + email });
+
+        } else if (type === 'distribution') {
+            text.push({ isHeading: false, text: `Я даю свое согласие ${org} (ИНН: ${inn}) на распространение моих персональных данных.` });
+            text.push({ isHeading: false, text: 'Под распространением понимается раскрытие персональных данных неопределенному кругу лиц.' });
+            text.push({ isHeading: false, text: 'Я подтверждаю, что даю такое согласие свободно, своей волей и в своем интересе.' });
+
+        } else if (type === 'agreement') {
+            text.push({ isHeading: true, text: '1. Общие условия' });
+            text.push({ isHeading: false, text: `Настоящее Пользовательское соглашение (далее – Соглашение) регулирует отношения между ${org} (далее – Администрация) и пользователем (далее – Пользователь) по использованию сайта ${url}.` });
+
+            text.push({ isHeading: true, text: '2. Предмет соглашения' });
+            text.push({ isHeading: false, text: '2.1. Администрация предоставляет Пользователю доступ к материалам сайта, а также сервисам: ' + (opt.forms ? 'формы связи, ' : '') + (opt.payment ? 'оплата, ' : '') + 'и иным функциям сайта.' });
+            text.push({ isHeading: false, text: '2.2. Использование сайта означает полное и безоговорочное принятие данного Соглашения.' });
+
+            text.push({ isHeading: true, text: '3. Обязательства сторон' });
+            text.push({ isHeading: false, text: '3.1. Пользователь обязуется не нарушать работу сайта и не передавать третьим лицам информацию, полученную на сайте, если она помечена как конфиденциальная.' });
+            text.push({ isHeading: false, text: '3.2. Администрация вправе в любое время изменять условия Соглашения без специального уведомления.' });
+
+            text.push({ isHeading: true, text: '4. Реквизиты' });
+            text.push({ isHeading: false, text: `${org}\nИНН: ${inn}\nАдрес: ${address}\nEmail: ${email}` });
+        }
+
+        return text;
     }
 </script>
 

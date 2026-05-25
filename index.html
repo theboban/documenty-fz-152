@@ -3,97 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Генератор документов 152-ФЗ</title>
-    <!-- Библиотеки для генерации .docx -->
+    <title>Генератор документов 152-ФЗ (Pro)</title>
     <script src="https://unpkg.com/docx@7.1.0/build/index.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; padding: 20px; color: #333; line-height: 1.6; }
-        .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         h1 { text-align: center; color: #2c3e50; margin-bottom: 10px; }
-        .subtitle { text-align: center; color: #666; margin-bottom: 30px; }
+        .subtitle { text-align: center; color: #7f8c8d; margin-bottom: 30px; font-size: 0.95em; }
         
-        .form-section { margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid #eee; }
-        .form-section:last-child { border-bottom: none; }
+        .section-title { font-size: 1.2em; font-weight: bold; color: #34495e; margin-top: 25px; margin-bottom: 15px; border-bottom: 2px solid #ecf0f1; padding-bottom: 5px; }
         
-        label { display: block; margin-bottom: 8px; font-weight: bold; color: #2c3e50; }
-        input[type="text"], input[type="email"], select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-size: 14px; transition: border 0.3s; }
-        input:focus, select:focus { border-color: #3498db; outline: none; }
-
-        /* Стили для кликабельных чекбоксов */
-        .checkbox-group { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #2c3e50; }
+        .sub-label { font-size: 0.85em; color: #7f8c8d; font-weight: normal; display: block; margin-bottom: 5px; }
+        
+        input[type="text"], input[type="email"], input[type="url"], select, textarea { 
+            width: 100%; padding: 10px; border: 1px solid #bdc3c7; border-radius: 4px; box-sizing: border-box; font-size: 14px; transition: border 0.3s;
+        }
+        input:focus, select:focus, textarea:focus { border-color: #3498db; outline: none; }
+        
+        /* Checkbox Styles */
+        .checkbox-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
         .checkbox-item { 
-            display: flex; 
-            align-items: center; 
-            gap: 12px; 
-            background: #f8f9fa; 
-            padding: 12px 15px; 
-            border-radius: 6px; 
-            cursor: pointer; 
-            transition: all 0.2s;
-            border: 1px solid #e9ecef;
-            user-select: none;
+            display: flex; align-items: center; gap: 10px; background: #f8f9fa; padding: 12px; 
+            border-radius: 6px; cursor: pointer; transition: background 0.2s; border: 1px solid #eee;
         }
-        .checkbox-item:hover { background: #e3f2fd; border-color: #bbdefb; }
-        .checkbox-item input { width: 18px; height: 18px; cursor: pointer; margin: 0; }
-        .checkbox-item span { font-size: 14px; font-weight: 500; }
+        .checkbox-item:hover { background: #eef2f3; }
+        .checkbox-item input { width: 18px; height: 18px; cursor: pointer; }
+        .checkbox-item span { user-select: none; font-size: 14px; }
 
-        .btn-group { display: flex; gap: 15px; margin-top: 20px; }
-        button { flex: 1; padding: 15px; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; }
-        
-        .btn-generate { background-color: #27ae60; color: white; }
-        .btn-generate:hover { background-color: #219150; transform: translateY(-2px); }
-        
-        .btn-copy { background-color: #3498db; color: white; display: none; }
-        .btn-copy:hover { background-color: #2980b9; }
-        
-        .btn-download { background-color: #e67e22; color: white; display: none; }
-        .btn-download:hover { background-color: #d35400; }
+        /* Dynamic Lists Styles */
+        .dynamic-list-container { background: #fdfdfd; border: 1px dashed #bdc3c7; padding: 15px; border-radius: 6px; margin-top: 10px; }
+        .list-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; flex-wrap: wrap; }
+        .list-row select { flex: 1; min-width: 200px; }
+        .list-row input { flex: 2; min-width: 200px; }
+        .btn-add { background: #3498db; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 13px; }
+        .btn-add:hover { background: #2980b9; }
+        .btn-remove { background: #e74c3c; color: white; border: none; width: 30px; height: 30px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn-remove:hover { background: #c0392b; }
 
-        /* Стили превью */
-        #previewContainer { 
-            margin-top: 30px; 
-            border: 1px solid #ddd; 
-            background: #fff; 
-            padding: 40px; 
-            border-radius: 4px; 
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+        /* Toggle for "None" option */
+        .toggle-none { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; background: #e8f6f3; padding: 10px; border-radius: 4px; border: 1px solid #a2d9ce; }
+        .toggle-none input { width: 18px; height: 18px; }
+        .hidden { display: none; }
+
+        button.action-btn { 
+            display: block; width: 100%; padding: 15px; margin-top: 10px;
+            color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; 
+            cursor: pointer; transition: transform 0.1s, opacity 0.2s; 
+        }
+        .btn-generate { background-color: #27ae60; }
+        .btn-generate:hover { background-color: #219150; }
+        .btn-copy { background-color: #f39c12; margin-top: 15px; display: none; }
+        .btn-copy:hover { background-color: #d35400; }
+        .btn-download { background-color: #3498db; margin-top: 10px; display: none; }
+        .btn-download:hover { background-color: #2980b9; }
+
+        /* Preview Area */
+        #previewArea { 
+            margin-top: 30px; padding: 25px; border: 1px solid #ddd; background: #fff; 
+            border-radius: 6px; white-space: pre-wrap; font-family: 'Times New Roman', Times, serif; 
+            font-size: 14pt; line-height: 1.5; color: #000; max-height: 600px; overflow-y: auto;
             display: none;
-            white-space: pre-wrap; /* Сохраняет переносы строк */
-            font-family: 'Times New Roman', Times, serif;
-            font-size: 14pt;
-            line-height: 1.5;
-            color: #000;
         }
-        #previewContainer h2 { font-size: 16pt; font-weight: bold; margin-top: 20px; margin-bottom: 10px; text-align: left; }
-        #previewContainer h1 { font-size: 18pt; font-weight: bold; text-align: center; margin-bottom: 20px; }
-        #previewContainer p { margin-bottom: 10px; text-align: justify; }
+        .preview-heading { font-weight: bold; font-size: 16pt; margin-top: 20px; margin-bottom: 10px; text-align: center; }
+        .preview-subheading { font-weight: bold; font-size: 14pt; margin-top: 15px; margin-bottom: 5px; }
         
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #2ecc71;
-            color: white;
-            padding: 15px 25px;
-            border-radius: 5px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            transform: translateX(200%);
-            transition: transform 0.3s ease-out;
-            z-index: 1000;
-        }
-        .notification.show { transform: translateX(0); }
+        .note { font-size: 0.85em; color: #95a5a6; margin-top: 5px; font-style: italic; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1>Генератор документов 152-ФЗ</h1>
-    <p class="subtitle">Заполните данные, выберите опции и получите готовый текст для сайта</p>
+    <p class="subtitle">Заполните данные, выберите опции и получите готовый документ для сайта</p>
 
-    <div class="form-section">
+    <!-- Тип документа -->
+    <div class="form-group">
         <label for="docType">1. Выберите тип документа:</label>
-        <select id="docType">
+        <select id="docType" onchange="resetForm()">
             <option value="policy">Политика обработки ПДн</option>
             <option value="cookie">Политика использования Cookie</option>
             <option value="consent">Согласие на обработку ПДн (для форм)</option>
@@ -103,150 +92,357 @@
         </select>
     </div>
 
-    <div class="form-section">
-        <label>2. Данные организации (Оператор):</label>
-        <input type="text" id="orgName" placeholder="Название (например, ООО 'Ромашка')" required>
+    <!-- Данные организации -->
+    <div class="section-title">2. Данные Оператора (Владельца сайта)</div>
+    <div class="form-group">
+        <input type="text" id="orgName" placeholder="Полное название (например, ООО 'Ромашка' или ИП Иванов И.И.)" required>
         <input type="text" id="orgInn" placeholder="ИНН" style="margin-top: 10px;">
+        <input type="text" id="orgOgrn" placeholder="ОГРН (необязательно)" style="margin-top: 10px;">
         <input type="text" id="orgAddress" placeholder="Юридический адрес" style="margin-top: 10px;">
         <input type="email" id="orgEmail" placeholder="Email для связи" style="margin-top: 10px;">
+        <input type="text" id="orgPhone" placeholder="Телефон" style="margin-top: 10px;">
     </div>
 
-    <div class="form-section">
-        <label>3. Данные сайта:</label>
-        <input type="text" id="siteUrl" placeholder="Адрес сайта (https://mysite.ru)" required>
+    <!-- Данные сайта -->
+    <div class="section-title">3. Данные сайта</div>
+    <div class="form-group">
+        <label>Адрес сайта (домен):</label>
+        <input type="url" id="siteUrl" placeholder="https://mysite.ru" required>
+        <div class="note">Документ будет ссылаться на этот адрес.</div>
     </div>
 
-    <div class="form-section">
-        <label>4. Что используется на сайте? (Нажмите на пункт):</label>
-        <div class="checkbox-group">
-            <label class="checkbox-item">
-                <input type="checkbox" id="useForms">
-                <span>Формы обратной связи</span>
-            </label>
-            <label class="checkbox-item">
-                <input type="checkbox" id="useCookies">
-                <span>Cookie файлы</span>
-            </label>
-            <label class="checkbox-item">
-                <input type="checkbox" id="useAnalytics">
-                <span>Яндекс.Метрика / GA</span>
-            </label>
-            <label class="checkbox-item">
-                <input type="checkbox" id="usePayment">
-                <span>Онлайн-оплата</span>
-            </label>
-            <label class="checkbox-item">
-                <input type="checkbox" id="useRegistration">
-                <span>Регистрация пользователей</span>
-            </label>
-            <label class="checkbox-item">
-                <input type="checkbox" id="useCalls">
-                <span>Заказ звонка</span>
-            </label>
-        </div>
+    <!-- Функционал сайта -->
+    <div class="section-title">4. Что используется на сайте?</div>
+    <div class="checkbox-grid">
+        <label class="checkbox-item"><input type="checkbox" id="useForms"> <span>Формы обратной связи / Заявки</span></label>
+        <label class="checkbox-item"><input type="checkbox" id="useCookies"> <span>Cookie файлы</span></label>
+        <label class="checkbox-item"><input type="checkbox" id="useAnalytics"> <span>Яндекс.Метрика / Google Analytics</span></label>
+        <label class="checkbox-item"><input type="checkbox" id="usePayment"> <span>Онлайн-оплата (эквайринг)</span></label>
+        <label class="checkbox-item"><input type="checkbox" id="useRegistration"> <span>Личный кабинет / Регистрация</span></label>
+        <label class="checkbox-item"><input type="checkbox" id="useCalls"> <span>Заказ обратного звонка</span></label>
+        <label class="checkbox-item"><input type="checkbox" id="useShipping"> <span>Доставка товаров (курьеры/почта)</span></label>
+        <label class="checkbox-item"><input type="checkbox" id="useCRM"> <span>CRM-система</span></label>
+        <label class="checkbox-item"><input type="checkbox" id="useHosting"> <span>Хостинг-провайдер</span></label>
     </div>
 
-    <div class="btn-group">
-        <button class="btn-generate" onclick="generateDocument()">Сгенерировать документ</button>
-        <button class="btn-copy" id="btnCopy" onclick="copyText()">Копировать текст</button>
-        <button class="btn-download" id="btnDownload" onclick="downloadDoc()">Скачать .docx</button>
+    <!-- Динамические блоки (появляются в зависимости от типа документа) -->
+    <div id="dynamicBlocks"></div>
+
+    <button class="action-btn btn-generate" onclick="generateDocument()">Сгенерировать документ</button>
+    
+    <div id="resultActions" style="display:none;">
+        <button class="action-btn btn-download" id="btnDownload" onclick="downloadDoc()">Скачать .docx</button>
+        <button class="action-btn btn-copy" id="btnCopy" onclick="copyText()">Копировать текст в буфер</button>
+        <div id="copyStatus" style="text-align:center; color: green; margin-top:5px; display:none;">Текст скопирован!</div>
     </div>
 
-    <!-- Область превью -->
-    <div id="previewContainer"></div>
+    <div id="previewArea"></div>
 </div>
 
-<div id="notification" class="notification">Текст скопирован в буфер обмена!</div>
-
 <script>
-    const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } = docx;
-    
-    let currentDocContentHTML = ""; // Для хранения HTML превью
-    let currentDocBlob = null;      // Для хранения Blob файла
+    // --- Конфигурация списков ---
+    const thirdPartiesOptions = [
+        { val: 'hosting', text: 'Хостинг-провайдер (сервер)' },
+        { val: 'crm', text: 'CRM-система' },
+        { val: 'email_service', text: 'Сервис email-рассылок' },
+        { val: 'payment', text: 'Платежный агрегатор / Банк' },
+        { val: 'delivery', text: 'Курьерская служба / Почта' },
+        { val: 'analytics', text: 'Сервисы веб-аналитики (Яндекс, Google)' },
+        { val: 'call_service', text: 'Сервис телефонии / Колл-трекинг' },
+        { val: 'contractors', text: 'Иные подрядчики (разработка, поддержка)' }
+    ];
 
+    const dataTypesOptions = [
+        { val: 'fio', text: 'Фамилия, Имя, Отчество' },
+        { val: 'phone', text: 'Номер телефона' },
+        { val: 'email', text: 'Адрес электронной почты' },
+        { val: 'address', text: 'Почтовый/юридический адрес' },
+        { val: 'passport', text: 'Паспортные данные (серия, номер)' },
+        { val: 'birth', text: 'Дата рождения' },
+        { val: 'order_info', text: 'Информация о заказах' },
+        { val: 'cookies', text: 'Данные cookie и IP-адрес' },
+        { val: 'other', text: 'Иные данные, предоставленные пользователем' }
+    ];
+
+    const actionsOptions = [
+        { val: 'collect', text: 'Сбор' },
+        { val: 'record', text: 'Запись' },
+        { val: 'systematize', text: 'Систематизация' },
+        { val: 'accumulate', text: 'Накопление' },
+        { val: 'store', text: 'Хранение' },
+        { val: 'clarify', text: 'Уточнение (обновление, изменение)' },
+        { val: 'extract', text: 'Извлечение' },
+        { val: 'use', text: 'Использование' },
+        { val: 'transfer', text: 'Передача (предоставление, доступ)' },
+        { val: 'depersonalize', text: 'Обезличивание' },
+        { val: 'block', text: 'Блокирование' },
+        { val: 'delete', text: 'Удаление' },
+        { val: 'destroy', text: 'Уничтожение' }
+    ];
+
+    let currentDocBlob = null;
+    let currentTextContent = "";
+
+    // --- Инициализация ---
+    function resetForm() {
+        document.getElementById('previewArea').style.display = 'none';
+        document.getElementById('resultActions').style.display = 'none';
+        renderDynamicBlocks();
+    }
+
+    function renderDynamicBlocks() {
+        const type = document.getElementById('docType').value;
+        const container = document.getElementById('dynamicBlocks');
+        container.innerHTML = '';
+
+        if (type === 'policy') {
+            container.innerHTML += createThirdPartiesBlock();
+            container.innerHTML += createDataTypesBlock('Цели обработки (кратко):', 'policy_goals');
+        } else if (type === 'consent') {
+            container.innerHTML += createDataTypesBlock('Перечень обрабатываемых данных:', 'consent_data');
+            container.innerHTML += createActionsBlock();
+        } else if (type === 'distribution') {
+            container.innerHTML += createDataTypesBlock('Перечень данных для распространения:', 'dist_data');
+            container.innerHTML += createThirdPartiesBlock('Категории получателей (кому можно передавать):');
+        } else if (type === 'agreement') {
+             container.innerHTML += createThirdPartiesBlock();
+        }
+    }
+
+    // --- Генераторы блоков ---
+    function createThirdPartiesBlock(labelText = 'Третьи лица, которым передаются данные:') {
+        return `
+        <div class="section-title">5. Передача данных третьим лицам</div>
+        <div class="toggle-none">
+            <input type="checkbox" id="noThirdParties" onchange="toggleThirdPartiesList()">
+            <label for="noThirdParties" style="margin:0; cursor:pointer;">Данные НЕ передаются третьим лицам</label>
+        </div>
+        <div id="thirdPartiesList" class="dynamic-list-container">
+            <label>${labelText}</label>
+            <div class="note">Выберите из списка или впишите свой вариант. По умолчанию добавлены популярные сервисы.</div>
+            <div id="tpRows"></div>
+            <button type="button" class="btn-add" onclick="addThirdPartyRow()">+ Добавить еще</button>
+        </div>
+        `;
+    }
+
+    function createDataTypesBlock(labelText, prefix) {
+        return `
+        <div class="section-title">5. Состав данных</div>
+        <div class="toggle-none">
+            <input type="checkbox" id="noDataLimit_${prefix}" onchange="toggleDataList('${prefix}')">
+            <label for="noDataLimit_${prefix}" style="margin:0; cursor:pointer;">Использовать стандартный полный перечень</label>
+        </div>
+        <div id="dataList_${prefix}" class="dynamic-list-container">
+            <label>${labelText}</label>
+            <div class="note">Отметьте только те данные, которые вы реально собираете.</div>
+            <div id="dtRows_${prefix}"></div>
+            <button type="button" class="btn-add" onclick="addDataTypeRow('${prefix}')">+ Добавить тип данных</button>
+        </div>
+        `;
+    }
+
+    function createActionsBlock() {
+        return `
+        <div class="section-title">6. Действия с данными</div>
+        <div class="toggle-none">
+            <input type="checkbox" id="allActions" checked onchange="toggleActionsList()">
+            <label for="allActions" style="margin:0; cursor:pointer;">Весь полный перечень действий (стандарт для 152-ФЗ)</label>
+        </div>
+        <div id="actionsList" class="dynamic-list-container hidden">
+            <label>Выберите действия, которые вы совершаете:</label>
+            <div id="actRows"></div>
+            <button type="button" class="btn-add" onclick="addActionRow()">+ Добавить действие</button>
+        </div>
+        `;
+    }
+
+    // --- Логика управления списками ---
+    function toggleThirdPartiesList() {
+        const isChecked = document.getElementById('noThirdParties').checked;
+        document.getElementById('thirdPartiesList').classList.toggle('hidden', isChecked);
+    }
+
+    function toggleDataList(prefix) {
+        const isChecked = document.getElementById(`noDataLimit_${prefix}`).checked;
+        // Если чекбокс "Стандартный" нажат, скрываем список и используем дефолт
+        document.getElementById(`dataList_${prefix}`).classList.toggle('hidden', isChecked);
+    }
+
+    function toggleActionsList() {
+        const isChecked = document.getElementById('allActions').checked;
+        document.getElementById('actionsList').classList.toggle('hidden', isChecked);
+    }
+
+    function addThirdPartyRow(defaultVal = '') {
+        const container = document.getElementById('tpRows');
+        const row = document.createElement('div');
+        row.className = 'list-row';
+        
+        let optionsHtml = `<option value="">-- Выберите из списка --</option>`;
+        thirdPartiesOptions.forEach(opt => {
+            const selected = (opt.val === defaultVal) ? 'selected' : '';
+            optionsHtml += `<option value="${opt.text}" ${selected}>${opt.text}</option>`;
+        });
+
+        row.innerHTML = `
+            <select class="tp-select">${optionsHtml}</select>
+            <input type="text" class="tp-input" placeholder="Или впишите название вручную">
+            <button type="button" class="btn-remove" onclick="this.parentElement.remove()">×</button>
+        `;
+        container.appendChild(row);
+    }
+
+    function addDataTypeRow(prefix, defaultVal = '') {
+        const container = document.getElementById(`dtRows_${prefix}`);
+        const row = document.createElement('div');
+        row.className = 'list-row';
+        
+        let optionsHtml = `<option value="">-- Выберите тип данных --</option>`;
+        dataTypesOptions.forEach(opt => {
+            const selected = (opt.text === defaultVal) ? 'selected' : '';
+            optionsHtml += `<option value="${opt.text}" ${selected}>${opt.text}</option>`;
+        });
+
+        row.innerHTML = `
+            <select class="dt-select">${optionsHtml}</select>
+            <input type="text" class="dt-input" placeholder="Или впишите свой вариант">
+            <button type="button" class="btn-remove" onclick="this.parentElement.remove()">×</button>
+        `;
+        container.appendChild(row);
+    }
+
+    function addActionRow(defaultVal = '') {
+        const container = document.getElementById('actRows');
+        const row = document.createElement('div');
+        row.className = 'list-row';
+        
+        let optionsHtml = `<option value="">-- Выберите действие --</option>`;
+        actionsOptions.forEach(opt => {
+            const selected = (opt.text === defaultVal) ? 'selected' : '';
+            optionsHtml += `<option value="${opt.text}" ${selected}>${opt.text}</option>`;
+        });
+
+        row.innerHTML = `
+            <select class="act-select">${optionsHtml}</select>
+            <button type="button" class="btn-remove" onclick="this.parentElement.remove()">×</button>
+        `;
+        container.appendChild(row);
+    }
+
+    // Сбор данных из списков
+    function getThirdPartiesList() {
+        if (document.getElementById('noThirdParties').checked) return null; // Не передаются
+        
+        const rows = document.querySelectorAll('#tpRows .list-row');
+        const items = [];
+        rows.forEach(row => {
+            const select = row.querySelector('.tp-select').value;
+            const input = row.querySelector('.tp-input').value.trim();
+            if (select) items.push(select);
+            else if (input) items.push(input);
+        });
+        return items.length > 0 ? items : ['Не передаются третьим лицам'];
+    }
+
+    function getDataList(prefix) {
+        // Если чекбокс "Стандартный" активен, возвращаем полный список по умолчанию
+        if (document.getElementById(`noDataLimit_${prefix}`).checked) {
+            return dataTypesOptions.map(o => o.text);
+        }
+
+        const rows = document.querySelectorAll(`#dtRows_${prefix} .list-row`);
+        const items = [];
+        rows.forEach(row => {
+            const select = row.querySelector('.dt-select').value;
+            const input = row.querySelector('.dt-input').value.trim();
+            if (select) items.push(select);
+            else if (input) items.push(input);
+        });
+        return items.length > 0 ? items : ['Фамилия, имя', 'Телефон', 'Email']; // Дефолт если пусто
+    }
+
+    function getActionsList() {
+        if (document.getElementById('allActions').checked) {
+            return actionsOptions.map(o => o.text);
+        }
+        const rows = document.querySelectorAll('#actRows .list-row');
+        const items = [];
+        rows.forEach(row => {
+            const val = row.querySelector('.act-select').value;
+            if (val) items.push(val);
+        });
+        return items.length > 0 ? items : ['Сбор', 'Хранение', 'Использование'];
+    }
+
+    // --- ГЕНЕРАЦИЯ ДОКУМЕНТА ---
     function generateDocument() {
         const docType = document.getElementById('docType').value;
-        const orgName = document.getElementById('orgName').value || "[Название]";
+        const orgName = document.getElementById('orgName').value || "[Название Организации]";
         const orgInn = document.getElementById('orgInn').value || "[ИНН]";
         const orgAddress = document.getElementById('orgAddress').value || "[Адрес]";
         const orgEmail = document.getElementById('orgEmail').value || "[Email]";
         const siteUrl = document.getElementById('siteUrl').value || "[Адрес Сайта]";
 
-        const options = {
+        const opt = {
             forms: document.getElementById('useForms').checked,
             cookies: document.getElementById('useCookies').checked,
             analytics: document.getElementById('useAnalytics').checked,
             payment: document.getElementById('usePayment').checked,
             registration: document.getElementById('useRegistration').checked,
-            calls: document.getElementById('useCalls').checked
+            calls: document.getElementById('useCalls').checked,
+            shipping: document.getElementById('useShipping').checked,
+            crm: document.getElementById('useCRM').checked,
+            hosting: document.getElementById('useHosting').checked
         };
 
-        // Генерируем структуру данных
-        const bodyData = getBodyText(docType, orgName, orgInn, orgAddress, orgEmail, siteUrl, options);
-        const title = getDocTitle(docType);
+        // Собираем динамические данные
+        const thirdParties = getThirdPartiesList();
+        const consentData = getDataList('consent_data');
+        const distData = getDataList('dist_data');
+        const policyGoals = getDataList('policy_goals');
+        const actions = getActionsList();
 
-        // 1. Рендерим HTML для превью
-        renderPreview(title, bodyData);
-
-        // 2. Готовим данные для скачивания (.docx)
-        prepareDocxFile(title, bodyData);
-
-        // Показываем кнопки действий
-        document.getElementById('btnCopy').style.display = 'block';
-        document.getElementById('btnDownload').style.display = 'block';
-        
-        // Скролл к превью
-        document.getElementById('previewContainer').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    function renderPreview(title, data) {
-        const container = document.getElementById('previewContainer');
-        container.style.display = 'block';
-        
-        let html = `<h1>${title}</h1>`;
-        
-        data.forEach(item => {
-            if (item.isHeading) {
-                html += `<h2>${item.text}</h2>`;
-            } else {
-                // Заменяем переносы строк на <br> для HTML, но оставляем структуру параграфов
-                const formattedText = item.text.replace(/\n/g, '<br>');
-                html += `<p>${formattedText}</p>`;
-            }
-        });
-
-        container.innerHTML = html;
-        currentDocContentHTML = container.innerText; // Сохраняем чистый текст для копирования
-    }
-
-    function prepareDocxFile(title, data) {
         let content = [];
+        const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, LineRuleType } = docx;
 
+        // Заголовок
+        const title = getDocTitle(docType);
         content.push(new Paragraph({
             text: title,
             heading: HeadingLevel.TITLE,
             alignment: AlignmentType.CENTER,
-            spacing: { after: 400 }
+            spacing: { after: 400, before: 200 }
         }));
 
-        data.forEach(line => {
-            if (line.isHeading) {
+        // Текст
+        const lines = getBodyText(docType, orgName, orgInn, orgAddress, orgEmail, siteUrl, opt, thirdParties, consentData, distData, policyGoals, actions);
+        
+        lines.forEach(line => {
+            if (line.type === 'h1') {
+                content.push(new Paragraph({
+                    text: line.text,
+                    heading: HeadingLevel.HEADING_1,
+                    spacing: { before: 300, after: 150 }
+                }));
+            } else if (line.type === 'h2') {
                 content.push(new Paragraph({
                     text: line.text,
                     heading: HeadingLevel.HEADING_2,
-                    spacing: { before: 300, after: 100 }
+                    spacing: { before: 250, after: 100 }
                 }));
+            } else if (line.type === 'list') {
+                line.items.forEach(item => {
+                    content.push(new Paragraph({
+                        children: [new TextRun({ text: "• " + item, break: 1 })],
+                        spacing: { after: 50 },
+                        indent: { left: 700 }
+                    }));
+                });
             } else {
-                // Разбиваем текст с переносами строк на несколько параграфов или используем break
-                // Для простоты в docx создадим один параграф с переносами
-                const runs = line.text.split('\n').map((part, index) => {
-                    if (index === 0) return new TextRun({ text: part });
-                    return [new TextRun({ break: 1 }), new TextRun({ text: part })];
-                }).flat();
-
                 content.push(new Paragraph({
-                    children: runs,
-                    spacing: { after: 200 }
+                    children: [new TextRun({ text: line.text, break: 1 })],
+                    spacing: { after: 150 }
                 }));
             }
         });
@@ -260,137 +456,157 @@
 
         Packer.toBlob(doc).then(blob => {
             currentDocBlob = blob;
+            
+            // Генерация текста для превью
+            let previewHtml = `<div class="preview-heading">${title}</div>`;
+            lines.forEach(line => {
+                if (line.type === 'h1') previewHtml += `<div class="preview-subheading">${line.text}</div>`;
+                else if (line.type === 'h2') previewHtml += `<div style="font-weight:bold; margin-top:10px;">${line.text}</div>`;
+                else if (line.type === 'list') {
+                    line.items.forEach(item => previewHtml += `<div>• ${item}</div>`);
+                }
+                else previewHtml += `<div>${line.text.replace(/\n/g, '<br>')}</div>`;
+            });
+            
+            const previewArea = document.getElementById('previewArea');
+            previewArea.innerHTML = previewHtml;
+            previewArea.style.display = 'block';
+            
+            document.getElementById('resultActions').style.display = 'block';
+            document.getElementById('btnDownload').style.display = 'block';
+            document.getElementById('btnCopy').style.display = 'block';
+            document.getElementById('copyStatus').style.display = 'none';
+
+            // Скролл к превью
+            previewArea.scrollIntoView({ behavior: 'smooth' });
         });
     }
 
     function downloadDoc() {
         if (currentDocBlob) {
-            const title = getDocTitle(document.getElementById('docType').value);
-            saveAs(currentDocBlob, `${title}.docx`);
-        } else {
-            alert("Сначала сгенерируйте документ!");
+            saveAs(currentDocBlob, `Document_152FZ.docx`);
         }
     }
 
     function copyText() {
-        if (!currentDocContentHTML) {
-            alert("Сначала сгенерируйте документ!");
-            return;
-        }
-
-        navigator.clipboard.writeText(currentDocContentHTML).then(() => {
-            showNotification();
-        }).catch(err => {
-            console.error('Ошибка копирования: ', err);
-            alert("Не удалось скопировать текст автоматически. Выделите текст в превью и скопируйте вручную.");
+        const text = document.getElementById('previewArea').innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            const status = document.getElementById('copyStatus');
+            status.style.display = 'block';
+            setTimeout(() => status.style.display = 'none', 2000);
         });
     }
 
-    function showNotification() {
-        const notif = document.getElementById('notification');
-        notif.classList.add('show');
-        setTimeout(() => {
-            notif.classList.remove('show');
-        }, 3000);
-    }
-
+    // --- ТЕКСТОВЫЕ ШАБЛОНЫ ---
     function getDocTitle(type) {
-        switch(type) {
-            case 'policy': return 'ПОЛИТИКА ОБРАБОТКИ ПЕРСОНАЛЬНЫХ ДАННЫХ';
-            case 'cookie': return 'ПОЛИТИКА ИСПОЛЬЗОВАНИЯ COOKIE';
-            case 'consent': return 'СОГЛАСИЕ НА ОБРАБОТКУ ПЕРСОНАЛЬНЫХ ДАННЫХ';
-            case 'newsletter': return 'СОГЛАСИЕ НА РАССЫЛКУ';
-            case 'distribution': return 'СОГЛАСИЕ НА РАСПРОСТРАНЕНИЕ ПЕРСОНАЛЬНЫХ ДАННЫХ';
-            case 'agreement': return 'ПОЛЬЗОВАТЕЛЬСКОЕ СОГЛАШЕНИЕ';
-            default: return 'ДОКУМЕНТ';
-        }
+        const titles = {
+            'policy': 'ПОЛИТИКА ОБРАБОТКИ ПЕРСОНАЛЬНЫХ ДАННЫХ',
+            'cookie': 'ПОЛИТИКА ИСПОЛЬЗОВАНИЯ COOKIE ФАЙЛОВ',
+            'consent': 'СОГЛАСИЕ НА ОБРАБОТКУ ПЕРСОНАЛЬНЫХ ДАННЫХ',
+            'newsletter': 'СОГЛАСИЕ НА ПОЛУЧЕНИЕ ИНФОРМАЦИОННОЙ РАССЫЛКИ',
+            'distribution': 'СОГЛАСИЕ НА РАСПРОСТРАНЕНИЕ ПЕРСОНАЛЬНЫХ ДАННЫХ',
+            'agreement': 'ПОЛЬЗОВАТЕЛЬСКОЕ СОГЛАШЕНИЕ'
+        };
+        return titles[type];
     }
 
-    function getBodyText(type, org, inn, address, email, url, opt) {
+    function getBodyText(type, org, inn, addr, email, url, opt, thirdParties, consentData, distData, policyGoals, actions) {
         let text = [];
 
+        // Вспомогательная функция для списка третьих лиц
+        const tpText = thirdParties === null 
+            ? "Персональные данные не передаются третьим лицам." 
+            : `Персональные данные могут передаваться следующим третьим лицам: ${thirdParties.join(', ')}. Передача осуществляется исключительно в целях, указанных в настоящей Политике, и при наличии соответствующих договоров.`;
+
         if (type === 'policy') {
-            text.push({ isHeading: true, text: '1. Общие положения' });
-            text.push({ isHeading: false, text: `Настоящая политика обработки персональных данных составлена в соответствии с требованиями Федерального закона от 27.07.2006. № 152-ФЗ «О персональных данных» и определяет порядок обработки персональных данных и меры по обеспечению безопасности персональных данных, предпринимаемые ${org} (далее – Оператор).` });
-            text.push({ isHeading: false, text: `1.1. Оператор ставит своей важнейшей целью и условием осуществления своей деятельности соблюдение прав и свобод человека и гражданина при обработке его персональных данных, в том числе защиты прав на неприкосновенность частной жизни, личную и семейную тайну.` });
-            text.push({ isHeading: false, text: `1.2. Настоящая политика Оператора в отношении обработки персональных данных (далее – Политика) применяется ко всей информации, которую Оператор может получить о посетителях веб-сайта ${url}.` });
+            text.push({ type: 'h1', text: '1. Общие положения' });
+            text.push({ type: 'text', text: `Настоящая политика обработки персональных данных составлена в соответствии с требованиями Федерального закона от 27.07.2006 № 152-ФЗ «О персональных данных». Оператором выступает ${org} (ИНН: ${inn}).` });
+            text.push({ type: 'text', text: `Политика применяется ко всей информации, которую Оператор может получить о посетителях веб-сайта ${url}.` });
 
-            text.push({ isHeading: true, text: '2. Основные понятия' });
-            text.push({ isHeading: false, text: '2.1. Персональные данные – любая информация, относящаяся прямо или косвенно к определенному или определяемому Пользователю веб-сайта.' });
-            text.push({ isHeading: false, text: '2.2. Обработка персональных данных – любое действие (операция) или совокупность действий (операций), совершаемых с использованием средств автоматизации или без них с персональными данными.' });
+            text.push({ type: 'h1', text: '2. Цели обработки' });
+            let goalsText = "Основные цели обработки:\n";
+            if (opt.forms) goalsText += "- Обработка запросов через формы обратной связи;\n";
+            if (opt.registration) goalsText += "- Предоставление доступа к личному кабинету;\n";
+            if (opt.payment) goalsText += "- Оформление и оплата заказов;\n";
+            if (opt.analytics) goalsText += "- Анализ посещаемости и улучшение качества сайта;\n";
+            if (policyGoals && policyGoals.length > 0 && policyGoals[0] !== "Не передаются третьим лицам") {
+                 // Если пользователь ввел свои цели
+                 goalsText += policyGoals.map(g => `- ${g}`).join('\n');
+            } else if (!opt.forms && !opt.registration && !opt.payment) {
+                 goalsText += "- Идентификация пользователя;\n- Связь с пользователем.";
+            }
+            text.push({ type: 'text', text: goalsText });
 
-            text.push({ isHeading: true, text: '3. Цели обработки' });
-            let goals = '3.1. Цель обработки персональных данных Пользователя:\n';
-            if (opt.forms) goals += '- Предоставление доступа Пользователю к сервисам, информации и/или материалам, содержащимся на веб-сайте (формы обратной связи).\n';
-            if (opt.analytics) goals += '- Анализ посещаемости веб-сайта и улучшение качества сервиса (Яндекс.Метрика, Google Analytics).\n';
-            if (opt.registration) goals += '- Регистрация пользователя на веб-сайте.\n';
-            if (opt.payment) goals += '- Оформление заказов и оплата услуг.\n';
-            text.push({ isHeading: false, text: goals });
+            text.push({ type: 'h1', text: '3. Передача данных' });
+            text.push({ type: 'text', text: tpText });
 
-            text.push({ isHeading: true, text: '4. Контакты' });
-            text.push({ isHeading: false, text: `Актуальная информация об Операторе:\nНаименование: ${org}\nИНН: ${inn}\nАдрес: ${address}\nEmail: ${email}` });
-
-        } else if (type === 'cookie') {
-            text.push({ isHeading: true, text: '1. Что такое Cookie' });
-            text.push({ isHeading: false, text: 'Cookie — это небольшой текстовый файл, который сохраняется на вашем компьютере или мобильном устройстве, когда вы открываете веб-сайт.' });
-
-            text.push({ isHeading: true, text: '2. Какие Cookie мы используем' });
-            let cookieTypes = 'Мы используем следующие виды файлов:\n';
-            if (opt.analytics) cookieTypes += '- Аналитические Cookie: помогают нам понять, как пользователи взаимодействуют с сайтом (Яндекс.Метрика, Google Analytics).\n';
-            if (opt.forms) cookieTypes += '- Функциональные Cookie: запоминают ваш выбор (например, язык или регион).\n';
-            text.push({ isHeading: false, text: cookieTypes });
-
-            text.push({ isHeading: true, text: '3. Управление Cookie' });
-            text.push({ isHeading: false, text: `Вы можете контролировать и/или удалять файлы cookie по своему усмотрению. Подробности см. на странице aboutcookies.org. Вы можете удалить все файлы cookie, которые уже есть на вашем компьютере, и настроить большинство браузеров так, чтобы они не позволяли сохранять их.` });
-            text.push({ isHeading: false, text: `Владелец сайта: ${org}, Email: ${email}` });
+            text.push({ type: 'h1', text: '4. Контакты' });
+            text.push({ type: 'text', text: `${org}\nАдрес: ${addr}\nEmail: ${email}` });
 
         } else if (type === 'consent') {
-            text.push({ isHeading: false, text: `Я, субъект персональных данных, в соответствии с Федеральным законом от 27.07.2006 года № 152-ФЗ «О персональных данных», даю свое согласие ${org} (ИНН: ${inn}), расположенному по адресу: ${address}, на обработку моих персональных данных.` });
-            text.push({ isHeading: false, text: 'Перечень персональных данных, на обработку которых дается согласие:' });
-            text.push({ isHeading: false, text: '- Фамилия, имя, отчество;\n- Номер телефона;\n- Адрес электронной почты;\n- Иные данные, предоставляемые в формах на сайте.' });
-
-            let purposes = 'Цели обработки:\n';
-            if (opt.forms) purposes += '- Обработка запросов через формы обратной связи.\n';
-            if (opt.calls) purposes += '- Перезвон мне.\n';
-            if (opt.registration) purposes += '- Регистрация в личном кабинете.\n';
-            text.push({ isHeading: false, text: purposes });
-
-            text.push({ isHeading: false, text: 'Согласие действует до момента его отзыва в письменной форме.' });
-
-        } else if (type === 'newsletter') {
-            text.push({ isHeading: false, text: `Я выражаю свое согласие ${org} (ИНН: ${inn}) на получение информационных рассылок на адрес моей электронной почты: ___________________.` });
-            text.push({ isHeading: false, text: 'Под рассылкой понимается регулярная отправка информационных сообщений о новостях компании, специальных предложениях, товарах и услугах.' });
-            text.push({ isHeading: false, text: 'Я могу отписаться от рассылки в любой момент, перейдя по ссылке в письме или направив запрос на email: ' + email });
+            text.push({ type: 'text', text: `Я, субъект персональных данных, даю свое согласие ${org} (ИНН: ${inn}) на обработку следующих моих персональных данных:` });
+            text.push({ type: 'list', items: consentData });
+            
+            text.push({ type: 'text', text: `\nЦели обработки: ${opt.forms ? 'обработка заявок, ' : ''}${opt.calls ? 'перезвон, ' : ''}${opt.registration ? 'регистрация, ' : ''}информирование об услугах.` });
+            
+            text.push({ type: 'text', text: `\nС перечнем действий над данными я ознакомлен: ${actions.join(', ')}.` });
+            text.push({ type: 'text', text: tpText });
+            text.push({ type: 'text', text: "\nСогласие действует до момента его отзыва." });
 
         } else if (type === 'distribution') {
-            text.push({ isHeading: false, text: `Я даю свое согласие ${org} (ИНН: ${inn}) на распространение моих персональных данных.` });
-            text.push({ isHeading: false, text: 'Под распространением понимается раскрытие персональных данных неопределенному кругу лиц.' });
-            text.push({ isHeading: false, text: 'Я подтверждаю, что даю такое согласие свободно, своей волей и в своем интересе.' });
+            text.push({ type: 'text', text: `Я даю согласие ${org} на распространение следующих моих персональных данных неопределенному кругу лиц:` });
+            text.push({ type: 'list', items: distData });
+            
+            text.push({ type: 'text', text: `\nКатегории получателей: ${thirdParties === null ? 'Не определены (данные не распространяются)' : thirdParties.join(', ')}.` });
+            text.push({ type: 'text', text: "\nЯ подтверждаю, что даю согласие свободно и в своем интересе." });
+
+        } else if (type === 'cookie') {
+            text.push({ type: 'h1', text: '1. Использование файлов Cookie' });
+            text.push({ type: 'text', text: `Сайт ${url} использует файлы cookie для улучшения работы сервиса и анализа трафика.` });
+            
+            text.push({ type: 'h1', text: '2. Виды используемых данных' });
+            let cookieList = [];
+            if (opt.analytics) cookieList.push("Аналитические cookie (Яндекс.Метрика, Google Analytics)");
+            if (opt.forms || opt.registration) cookieList.push("Функциональные cookie (авторизация, корзины)");
+            if (opt.payment) cookieList.push("Платежные cookie (безопасность транзакций)");
+            if (cookieList.length === 0) cookieList.push("Технические cookie, необходимые для работы сайта");
+            
+            text.push({ type: 'list', items: cookieList });
+            text.push({ type: 'text', text: `\nВы можете отключить сохранение cookie в настройках вашего браузера.` });
+            text.push({ type: 'text', text: `Контакты владельца: ${org}, ${email}` });
 
         } else if (type === 'agreement') {
-            text.push({ isHeading: true, text: '1. Общие условия' });
-            text.push({ isHeading: false, text: `Настоящее Пользовательское соглашение (далее – Соглашение) регулирует отношения между ${org} (далее – Администрация) и пользователем (далее – Пользователь) по использованию сайта ${url}.` });
-
-            text.push({ isHeading: true, text: '2. Предмет соглашения' });
-            let servicesList = [];
-            if (opt.forms) servicesList.push('формы связи');
-            if (opt.payment) servicesList.push('онлайн-оплата');
-            if (opt.registration) servicesList.push('личный кабинет');
+            text.push({ type: 'h1', text: '1. Общие условия' });
+            text.push({ type: 'text', text: `Настоящее соглашение регулирует использование сайта ${url}, принадлежащего ${org}.` });
             
-            const servicesStr = servicesList.length > 0 ? servicesList.join(', ') : 'информационные материалы';
-            text.push({ isHeading: false, text: `2.1. Администрация предоставляет Пользователю доступ к материалам сайта, а также сервисам: ${servicesStr}.` });
-            text.push({ isHeading: false, text: '2.2. Использование сайта означает полное и безоговорочное принятие данного Соглашения.' });
-
-            text.push({ isHeading: true, text: '3. Обязательства сторон' });
-            text.push({ isHeading: false, text: '3.1. Пользователь обязуется не нарушать работу сайта и не передавать третьим лицам информацию, полученную на сайте, если она помечена как конфиденциальная.' });
-            text.push({ isHeading: false, text: '3.2. Администрация вправе в любое время изменять условия Соглашения без специального уведомления.' });
-
-            text.push({ isHeading: true, text: '4. Реквизиты' });
-            text.push({ isHeading: false, text: `${org}\nИНН: ${inn}\nАдрес: ${address}\nEmail: ${email}` });
+            text.push({ type: 'h1', text: '2. Сбор данных' });
+            text.push({ type: 'text', text: `Используя сайт, вы соглашаетесь на сбор и обработку данных в соответствии с Политикой конфиденциальности. Мы можем передавать данные третьим лицам для оказания услуг: ${tpText}` });
+            
+            text.push({ type: 'h1', text: '3. Ответственность' });
+            text.push({ type: 'text', text: "Администрация сайта не несет ответственности за ущерб, причиненный пользователю в результате неправомерного использования материалов сайта." });
         }
 
         return text;
     }
+
+    // Инициализация при загрузке
+    window.onload = function() {
+        // Добавим одну строку по умолчанию в списки, если они есть
+        renderDynamicBlocks();
+        // Небольшая задержка, чтобы DOM отрисовался перед добавлением дефолтных строк
+        setTimeout(() => {
+            const type = document.getElementById('docType').value;
+            if(type === 'policy' || type === 'agreement') {
+                // Дефолтные третьи лица для политики
+                if(document.getElementById('useHosting')) addThirdPartyRow('hosting');
+                if(document.getElementById('useAnalytics')) addThirdPartyRow('analytics');
+            }
+            if(type === 'consent') {
+                addDataTypeRow('consent_data', 'Фамилия, Имя, Отчество');
+                addDataTypeRow('consent_data', 'Номер телефона');
+            }
+        }, 100);
+    };
 </script>
 
 </body>

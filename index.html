@@ -4,31 +4,95 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Генератор документов 152-ФЗ</title>
+    <!-- Библиотеки для генерации .docx -->
     <script src="https://unpkg.com/docx@7.1.0/build/index.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; padding: 20px; color: #333; }
-        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: #2c3e50; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-weight: bold; }
-        input[type="text"], input[type="email"], select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
-        .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .checkbox-item { display: flex; align-items: center; gap: 8px; background: #f9f9f9; padding: 8px; border-radius: 4px; }
-        .checkbox-item input { width: auto; }
-        button { display: block; width: 100%; padding: 15px; background-color: #27ae60; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; transition: background 0.3s; }
-        button:hover { background-color: #219150; }
-        .note { font-size: 0.9em; color: #666; margin-top: 5px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; padding: 20px; color: #333; line-height: 1.6; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #2c3e50; margin-bottom: 10px; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 30px; }
+        
+        .form-section { margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid #eee; }
+        .form-section:last-child { border-bottom: none; }
+        
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: #2c3e50; }
+        input[type="text"], input[type="email"], select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-size: 14px; transition: border 0.3s; }
+        input:focus, select:focus { border-color: #3498db; outline: none; }
+
+        /* Стили для кликабельных чекбоксов */
+        .checkbox-group { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+        .checkbox-item { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            background: #f8f9fa; 
+            padding: 12px 15px; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            transition: all 0.2s;
+            border: 1px solid #e9ecef;
+            user-select: none;
+        }
+        .checkbox-item:hover { background: #e3f2fd; border-color: #bbdefb; }
+        .checkbox-item input { width: 18px; height: 18px; cursor: pointer; margin: 0; }
+        .checkbox-item span { font-size: 14px; font-weight: 500; }
+
+        .btn-group { display: flex; gap: 15px; margin-top: 20px; }
+        button { flex: 1; padding: 15px; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; }
+        
+        .btn-generate { background-color: #27ae60; color: white; }
+        .btn-generate:hover { background-color: #219150; transform: translateY(-2px); }
+        
+        .btn-copy { background-color: #3498db; color: white; display: none; }
+        .btn-copy:hover { background-color: #2980b9; }
+        
+        .btn-download { background-color: #e67e22; color: white; display: none; }
+        .btn-download:hover { background-color: #d35400; }
+
+        /* Стили превью */
+        #previewContainer { 
+            margin-top: 30px; 
+            border: 1px solid #ddd; 
+            background: #fff; 
+            padding: 40px; 
+            border-radius: 4px; 
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+            display: none;
+            white-space: pre-wrap; /* Сохраняет переносы строк */
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 14pt;
+            line-height: 1.5;
+            color: #000;
+        }
+        #previewContainer h2 { font-size: 16pt; font-weight: bold; margin-top: 20px; margin-bottom: 10px; text-align: left; }
+        #previewContainer h1 { font-size: 18pt; font-weight: bold; text-align: center; margin-bottom: 20px; }
+        #previewContainer p { margin-bottom: 10px; text-align: justify; }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #2ecc71;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transform: translateX(200%);
+            transition: transform 0.3s ease-out;
+            z-index: 1000;
+        }
+        .notification.show { transform: translateX(0); }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1>Генератор документов 152-ФЗ</h1>
-    <p style="text-align: center; color: #666;">Заполните данные и скачайте готовый документ</p>
+    <p class="subtitle">Заполните данные, выберите опции и получите готовый текст для сайта</p>
 
-    <div class="form-group">
-        <label for="docType">Выберите тип документа:</label>
+    <div class="form-section">
+        <label for="docType">1. Выберите тип документа:</label>
         <select id="docType">
             <option value="policy">Политика обработки ПДн</option>
             <option value="cookie">Политика использования Cookie</option>
@@ -39,36 +103,66 @@
         </select>
     </div>
 
-    <div class="form-group">
-        <label>Данные организации (Оператор):</label>
+    <div class="form-section">
+        <label>2. Данные организации (Оператор):</label>
         <input type="text" id="orgName" placeholder="Название (например, ООО 'Ромашка')" required>
         <input type="text" id="orgInn" placeholder="ИНН" style="margin-top: 10px;">
         <input type="text" id="orgAddress" placeholder="Юридический адрес" style="margin-top: 10px;">
         <input type="email" id="orgEmail" placeholder="Email для связи" style="margin-top: 10px;">
     </div>
 
-    <div class="form-group">
-        <label>Данные сайта:</label>
+    <div class="form-section">
+        <label>3. Данные сайта:</label>
         <input type="text" id="siteUrl" placeholder="Адрес сайта (https://mysite.ru)" required>
     </div>
 
-    <div class="form-group">
-        <label>Что используется на сайте? (Отметьте нужное):</label>
+    <div class="form-section">
+        <label>4. Что используется на сайте? (Нажмите на пункт):</label>
         <div class="checkbox-group">
-            <div class="checkbox-item"><input type="checkbox" id="useForms"> Формы обратной связи</div>
-            <div class="checkbox-item"><input type="checkbox" id="useCookies"> Cookie файлы</div>
-            <div class="checkbox-item"><input type="checkbox" id="useAnalytics"> Яндекс.Метрика / GA</div>
-            <div class="checkbox-item"><input type="checkbox" id="usePayment"> Онлайн-оплата</div>
-            <div class="checkbox-item"><input type="checkbox" id="useRegistration"> Регистрация пользователей</div>
-            <div class="checkbox-item"><input type="checkbox" id="useCalls"> Заказ звонка</div>
+            <label class="checkbox-item">
+                <input type="checkbox" id="useForms">
+                <span>Формы обратной связи</span>
+            </label>
+            <label class="checkbox-item">
+                <input type="checkbox" id="useCookies">
+                <span>Cookie файлы</span>
+            </label>
+            <label class="checkbox-item">
+                <input type="checkbox" id="useAnalytics">
+                <span>Яндекс.Метрика / GA</span>
+            </label>
+            <label class="checkbox-item">
+                <input type="checkbox" id="usePayment">
+                <span>Онлайн-оплата</span>
+            </label>
+            <label class="checkbox-item">
+                <input type="checkbox" id="useRegistration">
+                <span>Регистрация пользователей</span>
+            </label>
+            <label class="checkbox-item">
+                <input type="checkbox" id="useCalls">
+                <span>Заказ звонка</span>
+            </label>
         </div>
     </div>
 
-    <button onclick="generateDocument()">Сгенерировать и скачать .docx</button>
+    <div class="btn-group">
+        <button class="btn-generate" onclick="generateDocument()">Сгенерировать документ</button>
+        <button class="btn-copy" id="btnCopy" onclick="copyText()">Копировать текст</button>
+        <button class="btn-download" id="btnDownload" onclick="downloadDoc()">Скачать .docx</button>
+    </div>
+
+    <!-- Область превью -->
+    <div id="previewContainer"></div>
 </div>
+
+<div id="notification" class="notification">Текст скопирован в буфер обмена!</div>
 
 <script>
     const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } = docx;
+    
+    let currentDocContentHTML = ""; // Для хранения HTML превью
+    let currentDocBlob = null;      // Для хранения Blob файла
 
     function generateDocument() {
         const docType = document.getElementById('docType').value;
@@ -87,18 +181,55 @@
             calls: document.getElementById('useCalls').checked
         };
 
+        // Генерируем структуру данных
+        const bodyData = getBodyText(docType, orgName, orgInn, orgAddress, orgEmail, siteUrl, options);
+        const title = getDocTitle(docType);
+
+        // 1. Рендерим HTML для превью
+        renderPreview(title, bodyData);
+
+        // 2. Готовим данные для скачивания (.docx)
+        prepareDocxFile(title, bodyData);
+
+        // Показываем кнопки действий
+        document.getElementById('btnCopy').style.display = 'block';
+        document.getElementById('btnDownload').style.display = 'block';
+        
+        // Скролл к превью
+        document.getElementById('previewContainer').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function renderPreview(title, data) {
+        const container = document.getElementById('previewContainer');
+        container.style.display = 'block';
+        
+        let html = `<h1>${title}</h1>`;
+        
+        data.forEach(item => {
+            if (item.isHeading) {
+                html += `<h2>${item.text}</h2>`;
+            } else {
+                // Заменяем переносы строк на <br> для HTML, но оставляем структуру параграфов
+                const formattedText = item.text.replace(/\n/g, '<br>');
+                html += `<p>${formattedText}</p>`;
+            }
+        });
+
+        container.innerHTML = html;
+        currentDocContentHTML = container.innerText; // Сохраняем чистый текст для копирования
+    }
+
+    function prepareDocxFile(title, data) {
         let content = [];
 
         content.push(new Paragraph({
-            text: getDocTitle(docType),
+            text: title,
             heading: HeadingLevel.TITLE,
             alignment: AlignmentType.CENTER,
             spacing: { after: 400 }
         }));
 
-        const bodyText = getBodyText(docType, orgName, orgInn, orgAddress, orgEmail, siteUrl, options);
-
-        bodyText.forEach(line => {
+        data.forEach(line => {
             if (line.isHeading) {
                 content.push(new Paragraph({
                     text: line.text,
@@ -106,8 +237,15 @@
                     spacing: { before: 300, after: 100 }
                 }));
             } else {
+                // Разбиваем текст с переносами строк на несколько параграфов или используем break
+                // Для простоты в docx создадим один параграф с переносами
+                const runs = line.text.split('\n').map((part, index) => {
+                    if (index === 0) return new TextRun({ text: part });
+                    return [new TextRun({ break: 1 }), new TextRun({ text: part })];
+                }).flat();
+
                 content.push(new Paragraph({
-                    children: [new TextRun({ text: line.text, break: 1 })],
+                    children: runs,
                     spacing: { after: 200 }
                 }));
             }
@@ -121,8 +259,39 @@
         });
 
         Packer.toBlob(doc).then(blob => {
-            saveAs(blob, `${getDocTitle(docType)}.docx`);
+            currentDocBlob = blob;
         });
+    }
+
+    function downloadDoc() {
+        if (currentDocBlob) {
+            const title = getDocTitle(document.getElementById('docType').value);
+            saveAs(currentDocBlob, `${title}.docx`);
+        } else {
+            alert("Сначала сгенерируйте документ!");
+        }
+    }
+
+    function copyText() {
+        if (!currentDocContentHTML) {
+            alert("Сначала сгенерируйте документ!");
+            return;
+        }
+
+        navigator.clipboard.writeText(currentDocContentHTML).then(() => {
+            showNotification();
+        }).catch(err => {
+            console.error('Ошибка копирования: ', err);
+            alert("Не удалось скопировать текст автоматически. Выделите текст в превью и скопируйте вручную.");
+        });
+    }
+
+    function showNotification() {
+        const notif = document.getElementById('notification');
+        notif.classList.add('show');
+        setTimeout(() => {
+            notif.classList.remove('show');
+        }, 3000);
     }
 
     function getDocTitle(type) {
@@ -203,7 +372,13 @@
             text.push({ isHeading: false, text: `Настоящее Пользовательское соглашение (далее – Соглашение) регулирует отношения между ${org} (далее – Администрация) и пользователем (далее – Пользователь) по использованию сайта ${url}.` });
 
             text.push({ isHeading: true, text: '2. Предмет соглашения' });
-            text.push({ isHeading: false, text: '2.1. Администрация предоставляет Пользователю доступ к материалам сайта, а также сервисам: ' + (opt.forms ? 'формы связи, ' : '') + (opt.payment ? 'оплата, ' : '') + 'и иным функциям сайта.' });
+            let servicesList = [];
+            if (opt.forms) servicesList.push('формы связи');
+            if (opt.payment) servicesList.push('онлайн-оплата');
+            if (opt.registration) servicesList.push('личный кабинет');
+            
+            const servicesStr = servicesList.length > 0 ? servicesList.join(', ') : 'информационные материалы';
+            text.push({ isHeading: false, text: `2.1. Администрация предоставляет Пользователю доступ к материалам сайта, а также сервисам: ${servicesStr}.` });
             text.push({ isHeading: false, text: '2.2. Использование сайта означает полное и безоговорочное принятие данного Соглашения.' });
 
             text.push({ isHeading: true, text: '3. Обязательства сторон' });
